@@ -1,0 +1,29 @@
+{% load staticfiles %}
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+		<link rel="stylesheet" type="text/css" href="{% static "style.css" %}">	
+		<script type="text/javascript" src="{% static "js/jquery-1.11.2.min.js" %}"></script>	
+	</head>
+	<body>
+		<div class="container">
+			<div class="navbar">
+				<div class="navbar-inner">
+					<a href="/"><h4>Система расчета нагрузки преподавателя</h4></a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="span2">
+					<ul class="nav nav-pills nav-stacked">
+						<li class="active"><a href="#">Расчет нагрузки</a></li>
+						<li><a href="#">Материалы</a></li>
+						<li><a href="/prof">Преподаватели</a></li>
+					</ul>
+				</div>
+				<div class="span9">{% block main %}{% endblock %}</div>
+			</div>
+		</div>
+	</body>
+</html>
