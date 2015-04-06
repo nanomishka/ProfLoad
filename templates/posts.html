@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<p>Должность преподавателя</p>
+<table class="table table-hover">
+    <tr>
+        <th>№</th>
+        <th>Степень</th>
+    </tr>
+    {% for post in posts %}
+    <tr> 
+        <td>{{forloop.counter}}</td>
+        <td>{{post.name}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<form action="/post" method="post">
+    <fieldset>
+        <label>Добавить новую должность
+        <input type="text" placeholder="..."  name="post"></label>
+        <button type="submit" class="btn">Submit</button>
+    </fieldset>
+</form>
+
+{% endblock %}

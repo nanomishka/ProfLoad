@@ -1,13 +1,60 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from load.models import Posts, Degrees, Professors
 
 def index(request):
     context = {
     }
+
     return render(request, 'index.html', context)
 
 def prof(request):
+    try:
+        lastName = request.POST.get('lastName')
+        firstName = request.POST.get('firstName')
+        middleName = request.POST.get('middleName')
+        degree = Degrees.objects.get(name=request.POST.get('degree'))
+        post = Posts.objects.get(name=request.POST.get('post'))
+        prof = Professors.objects.create(last_name=lastName, first_name=firstName, middle_name=middleName, post=post, degree=degree)
+    except:
+       status = "OK"
+    professor = Professors.objects.all()
+    degrees = Degrees.objects.all()
+    posts = Posts.objects.all()
     context = {
+        "professors" : professor,
+        "degrees" : degrees,
+        "posts" : posts,
     }
     return render(request, 'prof.html', context)
+
+def degree(request):
+    try:
+        new_degree = request.POST.get('degree')
+        d = Degrees.objects.create(name=new_degree)
+        status = "Запись вставлена"
+    except:
+        status = "Данная запусь уже существет"
+    degrees = Degrees.objects.all()
+    context = {
+        "degrees" : degrees,
+        "status" : status
+    }
+    return render(request, 'degrees.html', context)
+
+def post(request):
+    try:
+        new_degree = request.POST.get('post')
+        p = Posts.objects.create(name=new_degree)
+        status = "Запись вставлена"
+    except:
+        status = "Данная запусь уже существет"
+    posts = Posts.objects.all()
+    context = {
+        "posts" : posts,
+        "status" : status
+    }
+    return render(request, 'posts.html', context)

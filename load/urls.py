@@ -5,4 +5,6 @@ from load import views
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
     url(r'^prof$', views.prof, name='prof'),
+    url(r'^degree$', views.degree, name='degree'),
+    url(r'^post$', views.post, name='post'),
 )

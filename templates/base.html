@@ -12,6 +12,7 @@
 			<div class="navbar">
 				<div class="navbar-inner">
 					<a href="/"><h4>Система расчета нагрузки преподавателя</h4></a>
+					<!--Сегодня {% now "j.m.Y" %}-->
 				</div>
 			</div>
 			<div class="row">
@@ -20,6 +21,8 @@
 						<li class="active"><a href="#">Расчет нагрузки</a></li>
 						<li><a href="#">Материалы</a></li>
 						<li><a href="/prof">Преподаватели</a></li>
+						<li><a href="/degree">Степень</a></li>
+						<li><a href="/post">Должность</a></li>
 					</ul>
 				</div>
 				<div class="span9">{% block main %}{% endblock %}</div>
