@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<p>Кафедра</p>
+<table class="table table-hover">
+    <tr>
+        <th>№</th>
+        <th>Название кафедры</th>
+    </tr>
+    {% for caf in cafs %}
+    <tr> 
+        <td>{{forloop.counter}}</td>
+        <td>{{caf.name}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<form action="/caf" method="post">
+    <fieldset>
+        <label>Добавить новую кафедру
+        <input type="text" placeholder="..."  name="caf"></label>
+        <button type="submit" class="btn">Submit</button>
+    </fieldset>
+</form>
+
+{% endblock %}

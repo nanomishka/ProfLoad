@@ -19,12 +19,11 @@
 				<div class="span2">
 					<ul class="nav nav-pills nav-stacked">
 						<li class="active"><a href="#">Расчет нагрузки</a></li>
+						<li><a href="#">Материалы</a></li>
 						<li><a href="/prof">Преподаватели</a></li>
 						<li><a href="/degree">Степень</a></li>
 						<li><a href="/post">Должность</a></li>
 						<li><a href="/caf">Кафедра</a></li>
-						<li><a href="/subject">Предмет</a></li>
-						<li><a href="/group">Группа</a></li>
 					</ul>
 				</div>
 				<div class="span9">{% block main %}{% endblock %}</div>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h4>Преподаватели</h4>
+
+<table class="table table-hover">
+    <tr>
+        <th>№</th>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчетство</th>
+        <th>Звание</th>
+        <th>Должность</th>
+    </tr>
+    {% for professor in professors %}
+    <tr> 
+        <td>{{forloop.counter}}</td>
+        <td>{{professor.last_name}}</td>
+        <td>{{professor.first_name}}</td>
+        <td>{{professor.middle_name}}</td>
+        <td>{{professor.degree.name}}</td>
+        <td>{{professor.post.name}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{{ status }}
+<form class="form-horizontal" action="/prof" method="post">
+    <div class="form-group">
+        <label for="lastName" class="col-sm-2 control-label">Фамилия</label>
+        <input type="text" class="form-control" id="lastName" name="lastName">
+    </div>
+    <div class="form-group">
+        <label for="firstName" class="col-sm-2 control-label">Имя</label>
+        <input type="text" class="form-control" id="firstName" name="firstName">
+    </div>
+    <div class="form-group">
+        <label for="middleName" class="col-sm-2 control-label">Отчетство</label>
+        <input type="text" class="form-control" id="middleName" name="middleName">
+    </div>
+    <div class="form-group">
+        <label for="middleName" class="col-sm-2 control-label">Звание</label>
+        <select class="span2" name="degree">
+            <option value="" selected>Выбрать</option>
+            {% for degree in degrees %}
+                <option value="{{ degree.name }}">{{ degree.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="middleName" class="col-sm-2 control-label">Должность</label>
+        <select class="span2" name="post">
+            <option value="" selected>Выбрать</option>
+            {% for post in posts %}
+                <option value="{{ post.name }}">{{ post.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-info">Добавить преподавателя</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

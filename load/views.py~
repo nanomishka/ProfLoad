@@ -62,7 +62,3 @@ def post(request):
 def caf(request):
     context = {}
     return render(request, 'caf.html', context)
-
-def subject(request):
-    context = {}
-    return render(request, 'subject.html', context)
