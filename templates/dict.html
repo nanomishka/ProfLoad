@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<p>{{ title }}</p>
+<table class="table table-hover">
+    <tr>
+        <th>№</th>
+        <th>Название кафедры</th>
+    </tr>
+    {% for item in items %}
+    <tr> 
+        <td>{{forloop.counter}}</td>
+        <td>{{item.name}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<form action="/{{ url }}" method="post">
+    <fieldset>
+        <label>Добавить {{ add }}
+        <input type="text" placeholder="..."  name="caf"></label>
+        <button type="submit" class="btn">Добавить</button>
+    </fieldset>
+</form>
+
+{% endblock %}

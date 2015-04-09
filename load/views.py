@@ -3,7 +3,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse
-from load.models import Posts, Degrees, Professors
+from load.models import Posts, Degrees, Professors, Caf, Subject, FormPass, TypeLoad, LoadUnit, Group, Spread
 
 def index(request):
     context = {
@@ -37,7 +37,7 @@ def degree(request):
         d = Degrees.objects.create(name=new_degree)
         status = "Запись вставлена"
     except:
-        status = "Данная запусь уже существет"
+        status = "Данная запусь уже существует"
     degrees = Degrees.objects.all()
     context = {
         "degrees" : degrees,
@@ -51,7 +51,7 @@ def post(request):
         p = Posts.objects.create(name=new_degree)
         status = "Запись вставлена"
     except:
-        status = "Данная запусь уже существет"
+        status = "Данная запись уже существует"
     posts = Posts.objects.all()
     context = {
         "posts" : posts,
@@ -60,9 +60,53 @@ def post(request):
     return render(request, 'posts.html', context)
 
 def caf(request):
-    context = {}
-    return render(request, 'caf.html', context)
+    try:
+        new_caf = request.POST.get('caf')
+        p = Caf.objects.create(name=new_caf)
+        status = "Запись вставлена"
+    except:
+        status = "Данная запись уже существует"
+    cafs = Caf.objects.all()
+    context = {
+        "title" : "Кафедры",
+        "items" : cafs,
+        "status" : status,
+        "url" : "caf",
+        "add" : "кафедру"
+    }
+    return render(request, 'dict.html', context)
 
 def subject(request):
-    context = {}
-    return render(request, 'subject.html', context)
+    try:
+        new_subject = request.POST.get('subject')
+        p = Subject.objects.create(name=new_subject)
+        status = "Запись вставлена"
+    except:
+        status = "Данная запись уже существует"
+    cafs = Caf.objects.all()
+    context = {
+        "title" : "Предметы",
+        "items" : subjects,
+        "status" : status,
+        "url" : "subject",
+        "add" : "предмет"
+    }
+    return render(request, 'dict.html', context)
+    
+def post(request):
+    try:
+        new_post = request.POST.get('post')
+        p = Posts.objects.create(name=new_post)
+        status = "Запись вставлена"
+    except:
+        status = "Данная запись уже существует"
+    poss = Caf.objects.all()
+    context = {
+        "title" : "Предметы",
+        "items" : subjects,
+        "status" : status,
+        "url" : "subject",
+        "add" : "предмет"
+    }
+    return render(request, 'dict.html', context)
+
