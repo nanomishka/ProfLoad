@@ -12,6 +12,7 @@
         <th>Отчетство</th>
         <th>Звание</th>
         <th>Должность</th>
+        <th></th>
     </tr>
     {% for professor in professors %}
     <tr> 
@@ -21,6 +22,9 @@
         <td>{{professor.middle_name}}</td>
         <td>{{professor.degree.name}}</td>
         <td>{{professor.post.name}}</td>
+        <td>
+            <a href="/{{url}}?remove={{professor.id}}"><i class="icon-remove"></i></a>
+        </td>
     </tr>
     {% endfor %}
 </table>
