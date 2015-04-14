@@ -96,7 +96,7 @@ def post(request):
 
     try:
         new_post = request.POST.get('attr')
-        p = post.objects.create(name=new_post)
+        post = Posts.objects.create(name=new_post)
         status = "Запись вставлена"
     except:
         status = "Данная запись уже существует"
@@ -120,7 +120,7 @@ def degree(request):
 
     try:
         new_degree = request.POST.get('attr')
-        p = Degrees.objects.create(name=new_degree)
+        degree = Degrees.objects.create(name=new_degree)
         status = "Запись вставлена"
     except:
         status = "Данная запись уже существует"
@@ -136,8 +136,15 @@ def degree(request):
 
 def formpass(request):
     try:
+        removeId = request.GET.get('remove')
+        FormPass.objects.get(id=int(removeId)).delete()
+    except:
+        status = "Данная запись не существует" 
+
+
+    try:
         new_formPass = request.POST.get('attr')
-        p = FormPass.objects.create(name=new_formPass)
+        formpass = FormPass.objects.create(name=new_formPass)
         status = "Запись вставлена"
     except:
         status = "Данная запись уже существует"
@@ -146,15 +153,21 @@ def formpass(request):
         "title" : "Формы сдачи предмета",
         "items" : formPasss,
         "status" : status,
-        "url" : "formPass",
+        "url" : "formpass",
         "add" : "форму сдачи предмета"
     }
     return render(request, 'dict.html', context)
 
 def typeload(request):
     try:
+        removeId = request.GET.get('remove')
+        TypeLoad.objects.get(id=int(removeId)).delete()
+    except:
+        status = "Данная запись не существует" 
+
+    try:
         new_typeLoad = request.POST.get('attr')
-        p = TypeLoad.objects.create(name=new_formPass)
+        typeload = TypeLoad.objects.create(name=new_typeLoad)
         status = "Запись вставлена"
     except:
         status = "Данная запись уже существует"
@@ -163,53 +176,68 @@ def typeload(request):
         "title" : "Типы нагрузки",
         "items" : typeLoads,
         "status" : status,
-        "url" : "typeLoad",
+        "url" : "typeload",
         "add" : "тип нагрузки"
     }
     return render(request, 'dict.html', context)
 
 def group(request):
+
     try:
-        caf = request.POST.get('caf')
+        removeId = request.GET.get('remove')
+        Group.objects.get(id=int(removeId)).delete()
+    except:
+        status = "Данная запись не существует"
+
+    try:
+        caf = Caf.objects.get(name=request.POST.get('caf'))
         sem = request.POST.get('sem')
         number = request.POST.get('number')
-        prof = Group.objects.create(caf=new_caf, sem=new_sem, number=new_number)
+        group = Group.objects.create(caf=caf, sem=sem, number=number)
         status = "Запись вставлена"
     except:
-       status = "Данная запись уже существует"
-    group = Group.objects.all()
+        status = "Данная запись уже существует"
+
+    groups = Group.objects.all()
+    cafs = Caf.objects.all()
     context = {
-        "items" : groups,
-        "status" : status
+        "groups" : groups,
+        "status" : status,
+        "cafs" : cafs
     }
     return render(request, 'group.html', context)
 
 def loadUnit(request):
+
+    try:
+        removeId = request.GET.get('remove')
+        LoadUnit.objects.get(id=int(removeId)).delete()
+    except:
+        status = "Данная запись не существует"
+
     try:
         subject = Subject.objects.get(name=request.POST.get('subject'))
         caf = Caf.objects.get(name=request.POST.get('caf'))
-        formPass = FormPass.objects.get(name=request.POST.get('formpass'))
-        sem = request.POST.get('sem')
-        typeload = TypeLoad.objects.get(name=request.POST.get('typeload'))
-        hours = request.POST.get('hours')
-        loadUnit = LoadUnit.objects.create(subject=subject, caf=caf, formPass=formpass, sem=sem, typeLoad=typeLoad, hours=hours)
+        formPass = FormPass.objects.get(name=request.POST.get('formPass'))
+        sem = int(request.POST.get('sem'))
+        typeLoad = TypeLoad.objects.get(name=request.POST.get('typeLoad'))
+        hours = int(request.POST.get('hours'))
+        loadUnit = LoadUnit.objects.create(subject=subject, caf=caf, formPass=formPass, sem=sem, typeLoad=typeLoad, hours=hours)
     except:
        status = "OK"
-    loadUnit = LoadUnit.objects.all()
-    subject = Subject.objects.all()
-    caf = Caf.objects.all()
-    formPass = FormPass.objects.all()
-    typeLoad = TypeLoad.objects.all()
+    loadUnits = LoadUnit.objects.all().order_by('subject')
+    subjects = Subject.objects.all()
+    cafs = Caf.objects.all()
+    formPasss = FormPass.objects.all()
+    typeLoads = TypeLoad.objects.all()
     context = {
-        "loadUnit" : loadUnit,
-        "subject" : subject,
-        "caf" : caf,
-        "formPass" : formPass,
-        "sem" : sem,
-        "typeLoad" : typeLoad,
-        "hours" : hours,
+        "loadUnits" : loadUnits,
+        "subjects" : subjects,
+        "cafs" : cafs,
+        "formPasss" : formPasss,
+        "typeLoads" : typeLoads,
     }
-    return render(request, 'loadUnit.html', context)
+    return render(request, 'loadunit.html', context)
 
 def spread(request):
     try:
@@ -219,7 +247,7 @@ def spread(request):
         spread = Spread.objects.create(loadUnit=loadUnit, prof=prof, group=group)
     except:
        status = "OK"
-    Spread = Spread.objects.all()
+    spread = Spread.objects.all()
     loadUnit = LoadUnit.objects.all()
     prof = Professors.objects.all()
     caf = Caf.objects.all()
@@ -227,7 +255,7 @@ def spread(request):
         "loadUnit" : loadUnit,
         "subject" : subject,
         "caf" : caf,
-        "formPass" : formPass,
+        "formPasss" : formPass,
         "sem" : sem,
         "typeLoad" : typeLoad,
         "hours" : hours,

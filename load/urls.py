@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     url(r'^formpass$', views.formpass, name='formpass'),
     url(r'^group$', views.group, name='group'),
     url(r'^spread$', views.spread, name='spread'),
+    url(r'^loadunit$', views.loadUnit, name='loadunit'),
 )
