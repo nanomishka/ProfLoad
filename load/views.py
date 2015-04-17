@@ -6,7 +6,10 @@ from django.http import HttpResponse
 from load.models import Posts, Degrees, Professors, Caf, Subject, FormPass, TypeLoad, LoadUnit, Group, Spread
 
 def index(request):
+    spreads = Spread.objects.all()
+
     context = {
+        "spreads" : spreads,
     }
 
     return render(request, 'index.html', context)
@@ -229,20 +232,34 @@ def loadUnit(request):
         caf = Caf.objects.get(name=request.POST.get('caf'))
         formPass = FormPass.objects.get(name=request.POST.get('formPass'))
         sem = int(request.POST.get('sem'))
-        typeLoad = TypeLoad.objects.get(name=request.POST.get('typeLoad'))
-        hours = int(request.POST.get('hours'))
-        loadUnit = LoadUnit.objects.create(subject=subject, caf=caf, formPass=formPass, sem=sem, typeLoad=typeLoad, hours=hours)
+        typeLoad = TypeLoad.objects.all()
+        for t in range(typeLoad.order_by("id")[0].id, typeLoad.order_by("-id")[0].id+1):
+            hours = int(request.POST.get('load'+str(t), 0))
+            if hours != 0:
+                loadUnit = LoadUnit.objects.create(subject=subject, caf=caf, formPass=formPass, sem=sem, typeLoad=typeLoad.get(id=t), hours=hours)
+                groups = Group.objects.all().filter(caf=caf, sem=sem)
+                for gr in groups:
+                    Spread.objects.create(loadUnit=loadUnit, group=gr)
     except:
-       status = "OK"
+            status = "error"
+
     loadUnits = LoadUnit.objects.all().order_by('subject')
     subjects = Subject.objects.all()
     cafs = Caf.objects.all()
+
+    groups = Group.objects.all()
+    sem_dict = groups.order_by("sem").values("sem",).distinct()
+    sems = []
+    for s in sem_dict:
+        sems.append({'num':s['sem'],'count': groups.filter(sem=s['sem']).count()})
+
     formPasss = FormPass.objects.all()
     typeLoads = TypeLoad.objects.all()
     context = {
         "loadUnits" : loadUnits,
         "subjects" : subjects,
         "cafs" : cafs,
+        "sems" : sems,
         "formPasss" : formPasss,
         "typeLoads" : typeLoads,
         "menu" : "subject",

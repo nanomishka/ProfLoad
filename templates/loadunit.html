@@ -25,17 +25,17 @@
         <td>{{loadUnit.typeLoad.name}}</td>
         <td>{{loadUnit.hours}}</td>
         <td>
-            <a href="/loadunit?remove={{loadUnit.id}}"><i class="icon-remove"></i></a>
+            <a href="?remove={{loadUnit.id}}"><i class="icon-remove"></i></a>
         </td>
     </tr>
     {% endfor %}
 </table>
 {{ status }}
-<form class="form-horizontal" action="/loadunit" method="post">
+<form class="form-horizontal" action="" method="post">
 
     <div class="form-group">
         <label for="subject" class="col-sm-2 control-label">Предмет</label>
-        <select class="span2" name="subject">
+        <select class="span2" name="subject" required>
             <option value="" selected>Выбрать</option>
             {% for subject in subjects %}
                 <option value="{{ subject.name }}">{{ subject.name }}</option>
@@ -45,7 +45,7 @@
 
     <div class="form-group">
         <label for="caf" class="col-sm-2 control-label">Кафедра</label>
-        <select class="span2" name="caf">
+        <select class="span2" name="caf" required>
             <option value="" selected>Выбрать</option>
             {% for caf in cafs %}
                 <option value="{{ caf.name }}">{{ caf.name }}</option>
@@ -55,7 +55,7 @@
 
     <div class="form-group">
         <label for="formPass" class="col-sm-2 control-label">Форма сдачи</label>
-        <select class="span2" name="formPass">
+        <select class="span2" name="formPass" required>
             <option value="" selected>Выбрать</option>
             {% for formPass in formPasss %}
                 <option value="{{ formPass.name }}">{{ formPass.name }}</option>
@@ -65,29 +65,32 @@
 
     <div class="form-group">
         <label for="sem" class="col-sm-2 control-label">Семестр</label>
-        <input type="text" class="form-control" id="sem" name="sem">
-    </div>
-
-    <div class="form-group">
-        <label for="typeLoad" class="col-sm-2 control-label">Тип нагрузки</label>
-        <select class="span2" name="typeLoad">
+        <select class="span2" name="sem" required>
             <option value="" selected>Выбрать</option>
-            {% for typeLoad in typeLoads %}
-                <option value="{{ typeLoad.name }}">{{ typeLoad.name }}</option>
+            {% for sem in sems %}
+                <option value="{{ sem.num }}">{{ sem.num }} ({{ sem.count }})</option>
             {% endfor %}
         </select>
     </div>
 
     <div class="form-group">
-        <label for="hours" class="col-sm-2 control-label">Часы</label>
-        <input type="text" class="form-control" id="hours" name="hours">
+        <label class="col-sm-2 control-label muted">Тип нагрузки</label>
+        <label class="col-sm-2 pad5 form-control muted" >Количество часов</label>
     </div>
+
+    {% for typeLoad in typeLoads %}
+        <div class="form-group">
+            <label for="load{{ typeLoad.id }}" class="col-sm-2 control-label">{{ typeLoad.name }}</label>
+            <input type="number" class="form-control hours" id="load{{ typeLoad.id }}" 
+                name="load{{ typeLoad.id }}" value="0">
+        </div>
+
+    {% endfor %}
 
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button type="submit" class="btn btn-info">Добавить нагрузочную единицу</button>
         </div>
     </div>
-</form>
 </form>
 {% endblock %}

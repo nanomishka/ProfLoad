@@ -27,7 +27,7 @@
 <form class="form-horizontal" action="/group" method="post">
     <div class="form-group">
         <label for="middleName" class="col-sm-2 control-label">Кафедра</label>
-        <select class="span2" name="caf">
+        <select class="span2" name="caf" required>
             <option value="" selected>Выбрать</option>
             {% for caf in cafs %}
                 <option value="{{ caf.name }}">{{ caf.name }}</option>
@@ -37,11 +37,11 @@
 
     <div class="form-group">
         <label for="sem" class="col-sm-2 control-label">Семестр</label>
-        <input type="text" class="form-control" id="sem" name="sem">
+        <input type="number" class="form-control" id="sem" name="sem" required>
     </div>
     <div class="form-group">
         <label for="number" class="col-sm-2 control-label">Количество групп</label>
-        <input type="text" class="form-control" id="number" name="number">
+        <input type="number" class="form-control" id="number" name="number" required>
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">

@@ -41,5 +41,5 @@ class LoadUnit(models.Model):
 
 class Spread(models.Model):
 	loadUnit = models.ForeignKey(LoadUnit)
-	prof = models.ForeignKey(Professors)
+	prof = models.ForeignKey(Professors, null=True)
 	group = models.ForeignKey(Group)

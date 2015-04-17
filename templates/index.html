@@ -2,108 +2,34 @@
 
 {% block main %}
 
-<p>Нагрузка преподавателя</p>
+<h4>Нагрузочная единица</h4>
+
 <table class="table table-hover">
-	<tr>
-		<th>№</th>
-		<th>Фамилия</th>
-		<th>Имя</th>
-		<th>Отчетсво</th>
-		<th>Степень</th>
-		<th>Должность</th>
-		<th>Количество часов</th>
-	</tr>
-	<tr>
-		<td>1</td>
-		<td>Власов</td>
-		<td>Андрей</td>
-		<td>Игоревич</td>
-		<td>д.т.н.</td>
-		<td>преподаватель</td>
-		<td>456</td>
-	</tr>
-	<tr>
-		<td>2</td>
-		<td>Путин</td>
-		<td>Владимир</td>
-		<td>Владимироваич</td>
-		<td>д.т.н.</td>
-		<td>президент</td>
-		<td>789</td>
-	</tr>
-	<tr>
-		<td>1</td>
-		<td>Власов</td>
-		<td>Андрей</td>
-		<td>Игоревич</td>
-		<td>д.т.н.</td>
-		<td>преподаватель</td>
-		<td>456</td>
-	</tr>
-	<tr>
-		<td>2</td>
-		<td>Путин</td>
-		<td>Владимир</td>
-		<td>Владимироваич</td>
-		<td>д.т.н.</td>
-		<td>президент</td>
-		<td>789</td>
-	</tr>
-	<tr>
-		<td>1</td>
-		<td>Власов</td>
-		<td>Андрей</td>
-		<td>Игоревич</td>
-		<td>д.т.н.</td>
-		<td>преподаватель</td>
-		<td>456</td>
-	</tr>
-	<tr>
-		<td>2</td>
-		<td>Путин</td>
-		<td>Владимир</td>
-		<td>Владимироваич</td>
-		<td>д.т.н.</td>
-		<td>президент</td>
-		<td>789</td>
-	</tr>
-	<tr>
-		<td>1</td>
-		<td>Власов</td>
-		<td>Андрей</td>
-		<td>Игоревич</td>
-		<td>д.т.н.</td>
-		<td>преподаватель</td>
-		<td>456</td>
-	</tr>
-	<tr>
-		<td>2</td>
-		<td>Путин</td>
-		<td>Владимир</td>
-		<td>Владимироваич</td>
-		<td>д.т.н.</td>
-		<td>президент</td>
-		<td>789</td>
-	</tr>
-	<tr>
-		<td>1</td>
-		<td>Власов</td>
-		<td>Андрей</td>
-		<td>Игоревич</td>
-		<td>д.т.н.</td>
-		<td>преподаватель</td>
-		<td>456</td>
-	</tr>
-	<tr>
-		<td>2</td>
-		<td>Путин</td>
-		<td>Владимир</td>
-		<td>Владимироваич</td>
-		<td>д.т.н.</td>
-		<td>президент</td>
-		<td>789</td>
-	</tr>
+    <tr>
+        <th>№</th>
+        <th>Предмет</th>
+        <th>Тип нагрузки</th>
+        <th>Группа</th>
+        <th>Часы</th>
+        <th>Преподаватель</th>
+    </tr>
+    {% for spread in spreads %}
+    <tr> 
+        <td>{{forloop.counter}}</td>
+        <td>{{spread.loadUnit.subject.name}}</td>
+        <td>{{spread.loadUnit.typeLoad.name}}</td>
+        <td>{{spread.group.caf.name}}-{{spread.group.sem}}{{spread.group.number}}</td>
+        <td>{{spread.loadUnit.hours}}</td>
+        <td>
+        	{% if spread.prof.name  %} {{spread.prof.name}}
+        	{% else %}
+        		<button type="button" class="btn btn-primary">Назначить преподавателя</button>
+        	{% endif %}
+        </td>
+        <td>
+            <a href="?remove={{loadUnit.id}}"><i class="icon-remove"></i></a>
+        </td>
+    </tr>
+    {% endfor %}
 </table>
-
-
 {% endblock %}

@@ -9,3 +9,11 @@
 body {
 	overflow: scroll
 }
+
+.hours {
+	width: 50px;
+}
+
+.pad5 {
+	padding-top: 5px;
+}
