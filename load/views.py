@@ -35,6 +35,7 @@ def prof(request):
         "professors" : professor,
         "degrees" : degrees,
         "posts" : posts,
+        "menu" : "prof",   
     }
     return render(request, 'prof.html', context)
 
@@ -58,7 +59,8 @@ def caf(request):
         "items" : cafs,
         "status" : status,
         "url" : "caf",
-        "add" : "кафедру"
+        "add" : "кафедру",
+        "menu" : "group",
     }
     return render(request, 'dict.html', context)
 
@@ -82,7 +84,8 @@ def subject(request):
         "items" : subjects,
         "status" : status,
         "url" : "subject",
-        "add" : "предмет"
+        "add" : "предмет",
+        "menu" : "subject",
     }
     return render(request, 'dict.html', context)
     
@@ -106,7 +109,8 @@ def post(request):
         "items" : posts,
         "status" : status,
         "url" : "post",
-        "add" : "должность"
+        "add" : "должность",
+        "menu" : "prof",
     }
     return render(request, 'dict.html', context)
 
@@ -130,7 +134,8 @@ def degree(request):
         "items" : degrees,
         "status" : status,
         "url" : "degree",
-        "add" : "степень"
+        "add" : "степень",
+        "menu" : "prof",
     }
     return render(request, 'dict.html', context)
 
@@ -154,7 +159,8 @@ def formpass(request):
         "items" : formPasss,
         "status" : status,
         "url" : "formpass",
-        "add" : "форму сдачи предмета"
+        "add" : "форму сдачи предмета",
+        "menu" : "subject"
     }
     return render(request, 'dict.html', context)
 
@@ -177,7 +183,8 @@ def typeload(request):
         "items" : typeLoads,
         "status" : status,
         "url" : "typeload",
-        "add" : "тип нагрузки"
+        "add" : "тип нагрузки",
+        "menu" : "subject",
     }
     return render(request, 'dict.html', context)
 
@@ -193,7 +200,8 @@ def group(request):
         caf = Caf.objects.get(name=request.POST.get('caf'))
         sem = request.POST.get('sem')
         number = request.POST.get('number')
-        group = Group.objects.create(caf=caf, sem=sem, number=number)
+        for g in range(0, int(number)):
+            group = Group.objects.create(caf=caf, sem=sem, number=g+1)
         status = "Запись вставлена"
     except:
         status = "Данная запись уже существует"
@@ -203,7 +211,8 @@ def group(request):
     context = {
         "groups" : groups,
         "status" : status,
-        "cafs" : cafs
+        "cafs" : cafs,
+        "menu" : "group",
     }
     return render(request, 'group.html', context)
 
@@ -236,6 +245,7 @@ def loadUnit(request):
         "cafs" : cafs,
         "formPasss" : formPasss,
         "typeLoads" : typeLoads,
+        "menu" : "subject",
     }
     return render(request, 'loadunit.html', context)
 
@@ -259,5 +269,6 @@ def spread(request):
         "sem" : sem,
         "typeLoad" : typeLoad,
         "hours" : hours,
+        "menu" : spread,
     }
     return render(request, 'spread.html', context)

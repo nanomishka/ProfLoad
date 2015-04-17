@@ -12,23 +12,43 @@
 			<div class="navbar">
 				<div class="navbar-inner">
 					<a href="/"><h4>Система расчета нагрузки преподавателя</h4></a>
-					<!--Сегодня {% now "j.m.Y" %}-->
 				</div>
 			</div>
+
+			<div class="row">
+				<div class="span9">
+					<ul class="nav nav-tabs">
+					  <li {% if menu = "prof" %} class="active" {% endif %}>
+						<a href="/prof">Преподаватели</a></li>
+					  <li {% if menu = "subject" %} class="active" {% endif %}>
+						<a href="/subject">Предметы</a></li>
+					  <li {% if menu = "group" %} class="active" {% endif %}>
+						<a href="/group">Группы</a></li>
+					  <li {% if menu = "" %} class="active" {% endif %}>
+						<a href="/">Расчет нагрузки</a></li>
+					</ul>
+				</div>
+			</div>
+
 			<div class="row">
 				<div class="span2">
 					<ul class="nav nav-pills nav-stacked">
-						<li class="active"><a href="#">Расчет нагрузки</a></li>
-						<li><a href="/prof">Преподаватели</a></li>
-						<li><a href="/degree">Степень</a></li>
-						<li><a href="/post">Должность</a></li>
-						<li><a href="/caf">Кафедра</a></li>
-						<li><a href="/subject">Предмет</a></li>
-						<li><a href="/group">Группа</a></li>
-						<li><a href="/formpass">Форма сдачи</a></li>
-						<li><a href="/typeload">Тип нагрузки</a></li>
-						<li><a href="/loadunit">Нагрузочные единицы</a></li>
-						<li><a href="/loadunit">Распределение</a></li>
+
+						{% if menu = "prof" %}
+							<li><a href="/prof">Преподаватели</a></li>
+							<li><a href="/prof/degree">Степень</a></li>
+							<li><a href="/prof/post">Должность</a></li>
+						{% elif menu = "subject" %}
+							<li><a href="/subject/loadunit">Нагрузочные единицы</a></li>
+							<li><a href="/subject">Предмет</a></li>
+							<li><a href="/subject/formpass">Форма сдачи</a></li>
+							<li><a href="/subject/typeload">Тип нагрузки</a></li>
+						{% elif menu = "group" %}
+							<li><a href="/group">Группа</a></li>
+							<li><a href="/group/caf">Кафедра</a></li>
+						{% else %}
+							<li class="active"><a href="/">Расчет нагрузки</a></li>
+						{% endif %}										
 					</ul>
 				</div>
 				<div class="span9">{% block main %}{% endblock %}</div>
