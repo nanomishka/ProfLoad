@@ -24,6 +24,18 @@ class Group(models.Model):
 	caf = models.ForeignKey(Caf)
 	sem = models.IntegerField()
 	number = models.IntegerField()
+	GRADES = (
+		('b','bachelor'),
+		('m','master'),
+		('s','specialist'),
+	)
+	grade = models.CharField(max_length=1,
+									  choices=GRADES,
+									  default='b')
+	amount = models.IntegerField()
+
+	class Meta:
+		unique_together = ('caf', 'sem', 'number')
 
 class FormPass(models.Model):
 	name = models.CharField(max_length=20, unique=True, blank=False)

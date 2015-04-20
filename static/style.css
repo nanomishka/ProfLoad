@@ -10,10 +10,28 @@ body {
 	overflow: scroll
 }
 
-.hours {
+.pad5 {
+	padding-top: 5px;
+}
+
+.input_number_1 {
+	width: 40px;
+	margin-left: 110px;
+}
+
+.input_number_2 {
+	width: 40px;
+	margin-left: 12px;
+}
+
+.input_short {
 	width: 50px;
 }
 
-.pad5 {
-	padding-top: 5px;
+.nomargin {
+	margin: 0px;
+}
+
+.monospace {
+	font-family: "Courier New", monospace;
 }

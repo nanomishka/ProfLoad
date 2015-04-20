@@ -203,8 +203,11 @@ def group(request):
         caf = Caf.objects.get(name=request.POST.get('caf'))
         sem = request.POST.get('sem')
         number = request.POST.get('number')
+        grade = request.POST.get('grade')
         for g in range(0, int(number)):
-            group = Group.objects.create(caf=caf, sem=sem, number=g+1)
+            grNumber = request.POST.get('grNumber'+str(g))
+            grAmount = request.POST.get('grAmount'+str(g))
+            group = Group.objects.create(caf=caf, sem=sem, number=grNumber, amount=grAmount, grade=grade)
         status = "Запись вставлена"
     except:
         status = "Данная запись уже существует"
