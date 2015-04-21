@@ -54,7 +54,7 @@
 
             <div class="form-group">
                 <label for="sem" class="col-sm-2 control-label">Семестр</label>
-                <input type="number" class="form-control input_short" id="sem" name="sem" required>
+                <input type="number" class="form-control input_short" id="sem" name="sem" min=1 max=12 required>
             </div>
 
 
@@ -69,7 +69,7 @@
 
             <div class="form-group">
                 <label for="number" class="col-sm-2 control-label">Количество групп</label>
-                <input type="number" class="form-control input_short" id="number" name="number" required>
+                <input type="number" class="form-control input_short" min="1" max="5" id="number" name="number" required value=0>
             </div>
 
             <div class="form-group">
@@ -93,6 +93,8 @@
 <script>
     $("input[name=number]").change(function() { 
         $(".groups").empty();
+        count = $(".input_number_2").size();
+        console.info($(".input_number_2").size());
         for (i=0; i < $(this).val(); i++) {
             var $div = $("<div class='form-group'/>");
             var $in1 = $("<input type='number' for='number' tabindex="+i+20+" class='input_number_1' name='grNumber"+i+"' value="+(i+1)+" required/>");
@@ -100,7 +102,6 @@
             $div.append($in1);
             $div.append($in2);
             $(".groups").append($div);
-            //$div.show('slow');
         }
     })
 </script>
