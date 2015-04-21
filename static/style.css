@@ -35,3 +35,19 @@ body {
 .monospace {
 	font-family: "Courier New", monospace;
 }
+
+.select_hidden {
+	display: none;
+}
+
+.table_spread {
+	margin: 10px auto;
+	width: 95%;
+}
+
+.btn_spread {
+	position: absolute;
+	right: 200px;
+	top: 120px;
+	font-size: 18px;
+}

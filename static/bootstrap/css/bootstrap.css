@@ -2361,7 +2361,7 @@ table th[class*="span"],
   background-position: -288px 0;
 }
 
-.icon-remove {
+.icon-trash {
   background-position: -312px 0;
 }
 
@@ -2637,7 +2637,7 @@ table th[class*="span"],
   background-position: -24px -96px;
 }
 
-.icon-remove-sign {
+.icon-trash-sign {
   background-position: -48px -96px;
 }
 
@@ -2657,7 +2657,7 @@ table th[class*="span"],
   background-position: -144px -96px;
 }
 
-.icon-remove-circle {
+.icon-trash-circle {
   background-position: -168px -96px;
 }
 

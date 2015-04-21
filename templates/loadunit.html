@@ -25,7 +25,7 @@
         <td>{{loadUnit.typeLoad.name}}</td>
         <td>{{loadUnit.hours}}</td>
         <td>
-            <a href="?remove={{loadUnit.id}}"><i class="icon-remove"></i></a>
+            <a href="?remove={{loadUnit.id}}"><i class="icon-trash"></i></a>
         </td>
     </tr>
     {% endfor %}
@@ -44,16 +44,6 @@
     </div>
 
     <div class="form-group">
-        <label for="caf" class="col-sm-2 control-label">Кафедра</label>
-        <select class="span2" name="caf" required>
-            <option value="" selected>Выбрать</option>
-            {% for caf in cafs %}
-                <option value="{{ caf.name }}">{{ caf.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="form-group">
         <label for="formPass" class="col-sm-2 control-label">Форма сдачи</label>
         <select class="span2" name="formPass" required>
             <option value="" selected>Выбрать</option>
@@ -64,11 +54,21 @@
     </div>
 
     <div class="form-group">
+        <label for="caf" class="col-sm-2 control-label">Кафедра</label>
+        <select class="span2" name="caf" required>
+            <option value="" selected>Выбрать</option>
+            {% for caf in cafs %}
+                <option value="{{ caf.name }}">{{ caf.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
         <label for="sem" class="col-sm-2 control-label">Семестр</label>
         <select class="span2" name="sem" required>
             <option value="" selected>Выбрать</option>
-            {% for sem in sems %}
-                <option value="{{ sem.num }}">{{ sem.num }} ({{ sem.count }})</option>
+            {% for sem in semesters %}
+                <option value="{{ sem.sem }}_{{ sem.grade }}" data-caf="{{ sem.caf }}" class="select_hidden">{{ sem.sem }}{{group.caf.name}}{{group.sem}}{{group.number}}{% if sem.grade == "b"%}Б{% elif sem.grade == "m"%}М{% endif %}     ({{ sem.count }})</option>
             {% endfor %}
         </select>
     </div>
@@ -93,4 +93,12 @@
         </div>
     </div>
 </form>
+
+<script>
+    $("select[name=caf]").change(function() {
+        $("select[name=sem] option[data-caf!="+$(this).val()+"]").addClass("select_hidden");
+        $("select[name=sem] option[data-caf="+$(this).val()+"]").removeClass();
+    })
+</script>
+
 {% endblock %}

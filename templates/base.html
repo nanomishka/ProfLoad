@@ -25,35 +25,38 @@
 					  <li {% if menu = "group" %} class="active" {% endif %}>
 						<a href="/group">Группы</a></li>
 					  <li {% if menu = "subject" %} class="active" {% endif %}>
-						<a href="/subject">Предметы</a></li>
+						<a href="/loadunit">Предметы</a></li>
 					  <li {% if menu = "" %} class="active" {% endif %}>
 						<a href="/">Расчет нагрузки</a></li>
 					</ul>
 				</div>
 			</div>
-
 			<div class="row">
-				<div class="span2">
-					<ul class="nav nav-pills nav-stacked">
+				{% if menu %}
+					<div class="span2">
+						<ul class="nav nav-pills nav-stacked">
 
-						{% if menu = "prof" %}
-							<li><a href="/prof">Преподаватели</a></li>
-							<li><a href="/prof/degree">Степень</a></li>
-							<li><a href="/prof/post">Должность</a></li>
-						{% elif menu = "subject" %}
-							<li><a href="/subject/loadunit">Нагрузочные единицы</a></li>
-							<li><a href="/subject">Предмет</a></li>
-							<li><a href="/subject/formpass">Форма сдачи</a></li>
-							<li><a href="/subject/typeload">Тип нагрузки</a></li>
-						{% elif menu = "group" %}
-							<li><a href="/group">Группа</a></li>
-							<li><a href="/group/caf">Кафедра</a></li>
-						{% else %}
-							<li class="active"><a href="/">Расчет нагрузки</a></li>
-						{% endif %}										
-					</ul>
+							{% if menu = "prof" %}
+								<li><a href="/prof"><b>Преподаватели</b></a></li>
+								<li><a href="/prof/degree">Степень</a></li>
+								<li><a href="/prof/post">Должность</a></li>
+							{% elif menu = "subject" %}
+								<li><a href="/loadunit"><b>Нагрузочные единицы</b></a></li>
+								<li><a href="/loadunit/subject">Предмет</a></li>
+								<li><a href="/loadunit/formpass">Форма сдачи</a></li>
+								<li><a href="/loadunit/typeload">Тип нагрузки</a></li>
+							{% elif menu = "group" %}
+								<li><a href="/group"><b>Группа</b></a></li>
+								<li><a href="/group/caf">Кафедра</a></li>
+							{% else %}
+								<li><a href="/"><b>Расчет нагрузки</a></li>
+							{% endif %}										
+						</ul>
+					</div>
+				{% endif %}
+				<div class="span{% if menu %}9{% else %}12{% endif %}">
+					{% block main %}{% endblock %}
 				</div>
-				<div class="span9">{% block main %}{% endblock %}</div>
 			</div>
 		</div>
 	</body>

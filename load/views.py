@@ -4,18 +4,45 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from load.models import Posts, Degrees, Professors, Caf, Subject, FormPass, TypeLoad, LoadUnit, Group, Spread
+import codecs
+
 
 def index(request):
-    spreads = Spread.objects.all()
+    try:
+        removeId = request.GET.get('remove')
+        Spread.objects.get(id=int(removeId)).delete()
+    except:
+        status = "Данная запись не существует"
 
+    try:
+        clearId = request.GET.get('clear')
+        spread = Spread.objects.get(id=int(clearId))
+        spread.prof = None
+        spread.save()
+    except:
+        status = "Данная запись не существует"
+
+    try:
+        prof = Professors.objects.get(id=int(request.POST.get('prof')))
+        status = []
+        spreads = request.POST.getlist('spread')
+        for s in spreads:
+            status.append(s)
+            spread = Spread.objects.get(id=int(s))
+            spread.prof = prof
+            spread.save()
+    except:
+       status = "OK"
+    spreads = Spread.objects.all()
+    profs = Professors.objects.all() 
     context = {
         "spreads" : spreads,
+        "profs" : profs,
+        "status" : status,
     }
-
     return render(request, 'index.html', context)
 
 def prof(request):
-
     try:
         removeId = request.GET.get('remove')
         Professors.objects.get(id=int(removeId)).delete()
@@ -234,13 +261,14 @@ def loadUnit(request):
         subject = Subject.objects.get(name=request.POST.get('subject'))
         caf = Caf.objects.get(name=request.POST.get('caf'))
         formPass = FormPass.objects.get(name=request.POST.get('formPass'))
-        sem = int(request.POST.get('sem'))
+        sem = int(request.POST.get('sem').split("_", 1)[0])
+        grade = request.POST.get('sem').split("_", 1)[1]
         typeLoad = TypeLoad.objects.all()
         for t in range(typeLoad.order_by("id")[0].id, typeLoad.order_by("-id")[0].id+1):
             hours = int(request.POST.get('load'+str(t), 0))
             if hours != 0:
                 loadUnit = LoadUnit.objects.create(subject=subject, caf=caf, formPass=formPass, sem=sem, typeLoad=typeLoad.get(id=t), hours=hours)
-                groups = Group.objects.all().filter(caf=caf, sem=sem)
+                groups = Group.objects.all().filter(caf=caf, sem=sem, grade = grade)
                 for gr in groups:
                     Spread.objects.create(loadUnit=loadUnit, group=gr)
     except:
@@ -251,10 +279,12 @@ def loadUnit(request):
     cafs = Caf.objects.all()
 
     groups = Group.objects.all()
-    sem_dict = groups.order_by("sem").values("sem",).distinct()
-    sems = []
-    for s in sem_dict:
-        sems.append({'num':s['sem'],'count': groups.filter(sem=s['sem']).count()})
+    sem_caf = groups.order_by("caf").values("caf__name").distinct()
+    semesters = []
+    sem_sem = groups.values("caf__name","sem","grade").distinct()
+    for sem in sem_sem:
+        count = groups.filter(caf__name=sem['caf__name'],sem=sem['sem'],grade=sem['grade']).count()
+        semesters.append({'caf':sem['caf__name'],'sem':sem['sem'], 'grade':sem["grade"], 'count': count })
 
     formPasss = FormPass.objects.all()
     typeLoads = TypeLoad.objects.all()
@@ -262,7 +292,7 @@ def loadUnit(request):
         "loadUnits" : loadUnits,
         "subjects" : subjects,
         "cafs" : cafs,
-        "sems" : sems,
+        "semesters" : semesters,
         "formPasss" : formPasss,
         "typeLoads" : typeLoads,
         "menu" : "subject",
@@ -278,17 +308,9 @@ def spread(request):
     except:
        status = "OK"
     spread = Spread.objects.all()
-    loadUnit = LoadUnit.objects.all()
-    prof = Professors.objects.all()
-    caf = Caf.objects.all()
+    profs = Professors.objects.all() 
     context = {
-        "loadUnit" : loadUnit,
-        "subject" : subject,
-        "caf" : caf,
-        "formPasss" : formPass,
-        "sem" : sem,
-        "typeLoad" : typeLoad,
-        "hours" : hours,
-        "menu" : spread,
+        "spreads" : spreads,
+        "profs" : profs,
     }
     return render(request, 'spread.html', context)

@@ -15,23 +15,21 @@
     </tr>
     {% for group in groups %}
     <tr> 
-        <td class="monospace"><b>{{group.caf.name}}-{{group.sem}}{{group.number}}{% if group.grade == "b"%}Б
-        {% elif group.grade == "m"%}М
-             {% endif %}</b>
+        <td class="monospace"><b>{{group.caf.name}}-{{group.sem}}{{group.number}}{% if group.grade == "b"%}Б{% elif group.grade == "m"%}М{% endif %}</b>
         </td>
         <td>{{group.caf.name}}</td>
         <td>{{group.sem}}</td>
         <td>{{group.number}}</td>
         <td>{{group.amount}}</td>
         <td>
-            <a href="/group?remove={{group.id}}"><i class="icon-remove"></i></a>
+            <a href="/group?remove={{group.id}}"><i class="icon-trash"></i></a>
         </td>
     </tr>
     {% endfor %}
 </table>
 
 <!-- Button for FORM CREATE -->
-<a href="#myModal" role="button" class="btn btn-info" data-toggle="modal">Добавить группы</a>
+<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Добавить группы</a>
 <!-- FORM CREATE -->
 <div id="myModal" class="modal hide fade" tabindex="-1" 
     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -97,7 +95,7 @@
         $(".groups").empty();
         for (i=0; i < $(this).val(); i++) {
             var $div = $("<div class='form-group'/>");
-            var $in1 = $("<input type='number' for='number' class='input_number_1' name='grNumber"+i+"' value="+(i+1)+" required/>");
+            var $in1 = $("<input type='number' for='number' tabindex="+i+20+" class='input_number_1' name='grNumber"+i+"' value="+(i+1)+" required/>");
             var $in2 = $("<input type='number' class='form-control input_number input_number_2' id='number' name='grAmount"+i+"' required/>");
             $div.append($in1);
             $div.append($in2);

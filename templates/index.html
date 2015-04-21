@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
 {% block main %}
+<h4 style="width: 300px">Распределение нагрузки</h4>
+<form action="/" method="post">
+<a href="#myModal" role="button" class="btn btn-primary btn_spread" 
+data-toggle="modal">Назначить преподавателя</a>
 
-<h4>Нагрузочная единица</h4>
-
-<table class="table table-hover">
+<table class="table table-hover table_spread">
     <tr>
-        <th>№</th>
+        <th></th>
         <th>Предмет</th>
         <th>Тип нагрузки</th>
         <th>Группа</th>
@@ -15,21 +17,64 @@
     </tr>
     {% for spread in spreads %}
     <tr> 
-        <td>{{forloop.counter}}</td>
+        <td>
+            {% if not spread.prof  %}
+                <input type="checkbox" name="spread" value="{{spread.id}}"></td>
+            {% endif %}
         <td>{{spread.loadUnit.subject.name}}</td>
         <td>{{spread.loadUnit.typeLoad.name}}</td>
-        <td>{{spread.group.caf.name}}-{{spread.group.sem}}{{spread.group.number}}</td>
+        <td class="monospace">
+            {{spread.group.caf.name}}-{{spread.group.sem}}{{spread.group.number}}{% if spread.group.grade == "b"%}Б{% elif spread.group.grade == "m"%}М{% endif %}</td>
         <td>{{spread.loadUnit.hours}}</td>
         <td>
-        	{% if spread.prof.name  %} {{spread.prof.name}}
+        	{% if spread.prof  %} 
+                <a href="?clear={{spread.id}}"><i class="icon-remove"></i></a>
+                {{spread.prof.last_name}}
+                {{spread.prof.first_name|slice:":1"}}.
+                {{spread.prof.middle_name|slice:":1"}}.
         	{% else %}
-        		<button type="button" class="btn btn-primary">Назначить преподавателя</button>
+        		<a href="#myModal" role="button" class="btn btn-primary" 
+data-toggle="modal">Назначить</a>
         	{% endif %}
         </td>
         <td>
-            <a href="?remove={{loadUnit.id}}"><i class="icon-remove"></i></a>
+            <a href="?remove={{spread.id}}"><i class="icon-trash"></i></a>
         </td>
     </tr>
     {% endfor %}
 </table>
+
+<div id="myModal" class="modal hide fade" tabindex="-1" 
+    role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Назначить преподавателя</h3>
+    </div>
+
+    <div class="form-horizontal nomargin">
+        <div class="modal-body">
+
+            <div class="form-group">
+                <label for="middleName" class="col-sm-2 control-label">Преподаватель</label>
+                <select class="span2" name="prof" required>
+                    <option value="" selected>Выбрать</option>
+                    {% for prof in profs %}
+                        <option value="{{ prof.id }}">
+                            {{prof.last_name}}
+                            {{prof.first_name|slice:":1"}}.
+                            {{prof.middle_name|slice:":1"}}.
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Добавить группы</button>
+        </div>
+</div>
+
+</form>
 {% endblock %}
