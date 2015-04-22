@@ -30,6 +30,7 @@ body {
 
 .nomargin {
 	margin: 0px;
+	padding: 0px;
 }
 
 .monospace {
@@ -59,9 +60,9 @@ body {
 	background-repeat: no-repeat;
 	display: inline-block;
 	width: 14px;
-	height: 14	px;
+	height: 14px;
 	margin-top: 1px;
-	margin-left: 10px;
+	margin-left: 5px;
 	line-height: 14px;
 	vertical-align: text-top;
 }

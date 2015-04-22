@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<p>{{ title }}</p>
+<table class="table table-hover">
+    <tr>
+        <th>№</th>
+        <th>{{ title }}</th>
+        <th>Тип распределения</th>
+        <th></th>
+    </tr>
+    {% for item in items %}
+    <tr> 
+        <td>{{forloop.counter}}</td>
+        <td>{{item.name}}</td>
+        <td>
+        {{item.typeTL}}</td>
+        <td>
+            <a href="?remove={{item.id}}"><i class="icon-trash"></i></a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!-- Button for FORM CREATE -->
+<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Добавить тип нагрузки</a>
+<!-- FORM CREATE -->
+<div id="myModal" class="modal hide fade" tabindex="-1" 
+    role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Добавление типа нагрузки</h3>
+    </div>
+
+    <form class="form-horizontal nomargin" action="{{ url }}" method="post">
+        <div class="modal-body">
+
+            <div class="form-group">
+                <label for="lastName" class="col-sm-2 control-label">Название типа нагрузки</label>
+                <input type="text" placeholder="..." class="form-control" id="lastName" name="attr" required>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label" style="height: 70px;">Тип распределения</label>
+                <div class="radio" style="margin-left:180px;">
+                    <label><input type="radio" name="type" value="non" checked>по группам</label>
+                    <label><input type="radio" name="type" value="sub">на подгруппы</label>
+                    <label><input type="radio" name="type" value="all">на поток</label>
+                </div>
+            </div>
+            
+        </div>
+    
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+   
+    </form>
+</div>
+
+
+{% endblock %}
