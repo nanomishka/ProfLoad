@@ -3,7 +3,7 @@
 {% block main %}
 
 <h4>Разгрузки</h4>
-
+{{ status }}
 <table class="table table-hover">
     <tr>
         <th>№</th>
@@ -15,7 +15,15 @@
     {% for group in groups %}
     <tr> 
         <td>{{forloop.counter}}</td>
-        <td>{{group.caf.name}}</td>
+        <td>{% group.caf.name == "all" %}
+                {% for group in groups %}
+                    {% if group.caf == loadUnit.caf and group.sem == loadUnit.sem and group.grade == loadUnit.grade%}
+                        {{group.caf.name}}-{{group.sem}}{{group.number}}{% if group.grade == "b"%}Б{% elif group.grade == "m"%}М{% endif %}<br>
+                    {% endif %}
+                {% endfor %}
+            {% else%} {{ group.caf.name }}
+            {% endse%}
+            </td>
         <td>{{group.sem}}</td>
         <td>{{group.number}}</td>
         <td>

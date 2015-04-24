@@ -14,8 +14,11 @@
     <tr> 
         <td>{{forloop.counter}}</td>
         <td>{{item.name}}</td>
-        <td>
-        {{item.typeTL}}</td>
+        <td>{% if item.typeTL == "all" %} поток
+            {% elif item.typeTL == "sub" %} подгруппа
+            {% else %} группа
+            {% endif %}
+        </td>
         <td>
             <a href="?remove={{item.id}}"><i class="icon-trash"></i></a>
         </td>

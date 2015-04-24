@@ -19,9 +19,11 @@
         <td>{{forloop.counter}}</td>
         <td>{{loadUnit.subject.name}}</td>
         <td>{{loadUnit.formPass.name}}</td>
-        <td>{{loadUnit.caf.name}}-{{loadUnit.sem}}x{% if loadUnit.grade == "b"%}Б
-            {% elif loadUnit.grade == "m"%}М
-            {% endif %}</td>
+        <td>{% for group in groups %}
+                {% if group.caf == loadUnit.caf and group.sem == loadUnit.sem and group.grade == loadUnit.grade%}
+                    {{group.caf.name}}-{{group.sem}}{{group.number}}{% if group.grade == "b"%}Б{% elif group.grade == "m"%}М{% endif %}<br>
+                {% endif %}
+            {% endfor %}</td>
         <td>{{loadUnit.typeLoad.name}}</td>
         <td>{{loadUnit.hours}}
                 <a href="#split" role="button" data-toggle="modal" onclick="clear_form({{loadUnit.id}}, {{loadUnit.hours}});"><i class="icon-split"></i></a>
@@ -49,7 +51,7 @@
         
             <div class="form-group">
                 <label for="subject" class="col-sm-2 control-label">Предмет</label>
-                <select class="span2" name="subject" required>
+                <select class="span4" name="subject" required>
                     <option value="" selected>Выбрать</option>
                     {% for subject in subjects %}
                         <option value="{{ subject.name }}">{{ subject.name }}</option>
@@ -184,7 +186,7 @@
         $("input[name=number]").val(2);
         $(".parts").empty();
         $(".parts").append($("<input type='hidden' name='idLoad' value='"+spread+"'/>"));
-            $(".parts").append($in2);
+            //$(".parts").append($in2);
         for (i=0; i < 2; i++) {
             var $in2 = $("<input type='number' min=0 class='form-control input_number input_number_2' id='number' name='hours"+i+"' value=0 required/>");
             $(".parts").append($in2);

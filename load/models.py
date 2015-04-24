@@ -13,6 +13,8 @@ class Professors(models.Model):
 	post = models.ForeignKey(Posts)
 	degree = models.ForeignKey(Degrees)
 	note = models.CharField(max_length=127)
+	class Meta:
+		unique_together = ('first_name', 'last_name', 'middle_name')
 
 class Caf(models.Model):
 	name = models.CharField(max_length=6, unique=True, blank=False)
@@ -27,9 +29,12 @@ class Group(models.Model):
 	GRADES = (('b','b'),('m','m'),('s','s'))
 	grade = models.CharField(max_length=1, choices=GRADES,default='b')
 	amount = models.IntegerField()
-
 	class Meta:
-		unique_together = ('caf', 'sem', 'number')
+		unique_together = ('caf', 'sem', 'number', 'grade')
+
+class Subgroup(models.Model):
+	group = models.ForeignKey(Group, unique=True)
+	amount = models.IntegerField()
 
 class FormPass(models.Model):
 	name = models.CharField(max_length=20, unique=True, blank=False)
@@ -53,3 +58,5 @@ class Spread(models.Model):
 	loadUnit = models.ForeignKey(LoadUnit)
 	group = models.ForeignKey(Group, null=True)
 	prof = models.ForeignKey(Professors, null=True)
+	class Meta:
+		unique_together = ('loadUnit', 'group')

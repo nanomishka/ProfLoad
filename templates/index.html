@@ -18,28 +18,59 @@ data-toggle="modal">Назначить преподавателя</a>
     {% for spread in spreads %}
     <tr> 
         <td>
-            {% if not spread.prof  %}
+            {% if not spread.prof and spread.loadUnit.typeLoad.typeTL != "sub" or not spread.prof and spread.group in listSubGrps and spread.loadUnit.typeLoad.typeTL == "sub" %}
                 <input type="checkbox" name="spread" value="{{spread.id}}"></td>
             {% endif %}
         <td>{{spread.loadUnit.subject.name}}</td>
         <td>{{spread.loadUnit.typeLoad.name}}</td>
         <td class="monospace">
-            {{spread.group.caf.name}}-{{spread.group.sem}}{{spread.group.number}}{% if spread.group.grade == "b"%}Б{% elif spread.group.grade == "m"%}М{% endif %}</td>
-        <td>{{spread.loadUnit.hours}}</td>
-        <td>
-        	{% if spread.prof  %} 
-                <a href="?clear={{spread.id}}"><i class="icon-remove"></i></a>
-                {{spread.prof.last_name}}
-                {{spread.prof.first_name|slice:":1"}}.
-                {{spread.prof.middle_name|slice:":1"}}.
-        	{% else %}
-        		<a href="#myModal" role="button" class="btn btn-primary" 
-data-toggle="modal" onclick="$('input[value={{spread.id}}]').prop('checked', true);">Назначить</a>
-        	{% endif %}
+            {% if spread.loadUnit.typeLoad.typeTL == "all" %}
+                {% for group in groups %}
+                    {% if spread.loadUnit.caf == group.caf and spread.loadUnit.sem == group.sem and spread.loadUnit.grade == group.grade %}
+                        {{group.caf.name}}-{{group.sem}}{{group.number}}{% if group.grade == "b"%}Б{% elif group.grade == "m"%}М{% endif %}<br>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {{spread.group.caf.name}}-{{spread.group.sem}}{{spread.group.number}}{% if spread.group.grade == "b"%}Б{% elif spread.group.grade == "m"%}М{% endif %}
+
+                {% if spread.loadUnit.typeLoad.typeTL == "sub" %}
+                    {% if spread.group not in listSubGrps %} (?)
+                    {% else %} 
+                        {% for sub in subgroups %}
+                            {% if sub.group == spread.group %} ({{sub.amount}})
+                            {% endif %} 
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+
+            {% endif %}
+            </td>
+        <td>{{spread.loadUnit.hours}}
+            {% if spread.loadUnit.typeLoad.typeTL == "sub" %}
+                    {% if spread.group in listSubGrps %}
+                        {% for sub in subgroups %}
+                            {% if sub.group == spread.group %} x {{sub.amount}}
+                            {% endif %} 
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </td>
+        <td>{% if spread.loadUnit.typeLoad.typeTL == "sub" and spread.group not in listSubGrps %} 
+                <a href="#mySub" role="button" class="btn btn-warning" 
+    data-toggle="modal" onclick="clear_form({{spread.group.id}}, {{spread.group.amount}});">Разделить</a>
+            {% else %}
+            	{% if spread.prof  %} 
+                    <a href="?clear={{spread.id}}"><i class="icon-remove"></i></a>
+                    {{spread.prof.last_name}}
+                    {{spread.prof.first_name|slice:":1"}}.
+                    {{spread.prof.middle_name|slice:":1"}}.
+                    {% for prof in hours %}{% if prof.0 == spread.prof.id %} ({{prof.1}}) {% endif %}{% endfor %}
+            	{% else %}
+            		<a href="#myModal" role="button" class="btn btn-primary" 
+    data-toggle="modal" onclick="$('input[value={{spread.id}}]').prop('checked', true);">Назначить</a>
+            	{% endif %}
+            {% endif %}
         </td>
-        <!--td>
-            <a href="?remove={{spread.id}}"><i class="icon-trash"></i></a>
-        </td-->
     </tr>
     {% endfor %}
 </table>
@@ -64,6 +95,7 @@ data-toggle="modal" onclick="$('input[value={{spread.id}}]').prop('checked', tru
                             {{prof.last_name}}
                             {{prof.first_name|slice:":1"}}.
                             {{prof.middle_name|slice:":1"}}.
+                            {% for pr in hours %}{% if pr.0 == prof.id %} ({{pr.1}}) {% endif %}{% endfor %}
                         </option>
                     {% endfor %}
                 </select>
@@ -72,10 +104,56 @@ data-toggle="modal" onclick="$('input[value={{spread.id}}]').prop('checked', tru
 
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
-            <button type="submit" class="btn btn-primary">Разделить нагрузку</button>
+            <button type="submit" class="btn btn-primary">Назначить преподавателя</button>
         </div>
 
     </div>
 </div>
 </form>
+
+<form action="/" method="post">
+<div id="mySub" class="modal hide fade" tabindex="-1" 
+    role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Разделение на подгруппы</h3>
+    </div>
+
+    <div class="form-horizontal nomargin">
+        <div class="modal-body">
+
+            <input type='hidden' name='idGroup' value='-1'/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Студентов в группе: </label>
+                <label class="col-sm-2 pad5 form-control" name="count"><b></b></label>
+            </div>
+
+            <div class="form-group">
+                    <label for="number" class="col-sm-2 control-label">Количество  подгрупп</label>
+                    <input type="number" class="form-control input_short" min="1" max="4" id="number" name="number" value=1 required>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Разделить</button>
+        </div>
+
+    </div>
+</div>
+</form>
+
+<script>
+
+    function clear_form(group, count) { 
+        $("input[name=number]").val(2);
+        $("label[name=count]").text(count);
+        $("input[name=idGroup]").val(group)
+    }
+
+</script>
+
 {% endblock %}

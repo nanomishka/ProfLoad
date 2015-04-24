@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h4>Группы</h4>
+
+<table class="table table-hover">
+    <tr>
+        <th>Идентификатор</th>
+        <th>Количество студентов</th>
+        <th>Количество подгрупп</th>
+        <th></th>
+    </tr>
+    {% for subgroup in  subgroups %}
+    <tr> 
+        <td class="monospace"><b>{{subgroup.group.caf.name}}-{{subgroup.group.sem}}{{subgroup.group.number}}{% if subgroup.group.grade == "b"%}Б{% elif subgroup.group.grade == "m"%}М{% endif %}</b>
+        </td>
+        <td>{{subgroup.group.amount}}</td>
+        <td>{{subgroup.amount}}</td>
+        <td><a href="#mySub" role="button" class="btn btn-warning" 
+    data-toggle="modal" onclick="clear_form({{subgroup.id}}, {{subgroup.group.amount}});">Изменить</i></a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<form action="" method="post">
+<div id="mySub" class="modal hide fade" tabindex="-1" 
+    role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Разделение на подгруппы</h3>
+    </div>
+
+    <div class="form-horizontal nomargin">
+        <div class="modal-body">
+
+            <input type='hidden' name='idSubgroup' value='-1'/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Студентов в группе: </label>
+                <label class="col-sm-2 pad5 form-control" name="count"><b></b></label>
+            </div>
+
+            <div class="form-group">
+                    <label for="number" class="col-sm-2 control-label">Количество  подгрупп</label>
+                    <input type="number" class="form-control input_short" min="1" max="4" id="number" name="number" value=1 required>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Разделить</button>
+        </div>
+
+    </div>
+</div>
+</form>
+
+<script>
+
+    function clear_form(group, count) { 
+        $("input[name=number]").val(2);
+        $("label[name=count]").text(count);
+        $("input[name=idSubgroup]").val(group)
+    }
+
+</script>
+
+{% endblock %}

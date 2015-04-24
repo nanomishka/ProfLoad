@@ -3,17 +3,18 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse
-from load.models import Posts, Degrees, Professors, Caf, Subject, FormPass, TypeLoad, LoadUnit, Group, Spread
+from load.models import Posts, Degrees, Professors, Caf, Subject, FormPass, TypeLoad, LoadUnit, Group, Spread, Subgroup
 import codecs
 
 
 def index(request):
+    # delete spread
     try:
         removeId = request.GET.get('remove')
         Spread.objects.get(id=int(removeId)).delete()
     except:
         status = "Данная запись не существует"
-
+    # remove professor
     try:
         clearId = request.GET.get('clear')
         spread = Spread.objects.get(id=int(clearId))
@@ -21,9 +22,8 @@ def index(request):
         spread.save()
     except:
         status = "Данная запись не существует"
-
+    # push professors
     try:
-        status = int(request.POST.get('prof'))
         prof = Professors.objects.get(id=int(request.POST.get('prof')))
         spreads = request.POST.getlist('spread')
         for s in spreads:
@@ -32,13 +32,40 @@ def index(request):
             spread.save()
     except:
        status = "OK"
+    # split group
+    try:
+        group = int(request.POST.get('idGroup'))
+        amount = int(request.POST.get('number'))
+        Subgroup.objects.create(group=Group.objects.get(id=group), amount=amount)
+    except:
+       status = "OK"
 
-    spreads = Spread.objects.all().order_by('prof','loadUnit','group')
-    profs = Professors.objects.all() 
+    spreads = Spread.objects.all().order_by('loadUnit','group')
+    groups = Group.objects.all()
+    subgroups = Subgroup.objects.all()
+    listSubGrps = []
+    for sub in subgroups:
+        listSubGrps.append(sub.group)
+
+    profs = Professors.objects.all()
+    hours = []
+    for prof in profs:
+        listSpread = Spread.objects.filter(prof=prof)
+        time = 0
+        for spr in listSpread:
+            t = int(spr.loadUnit.hours)
+            if spr.loadUnit.typeLoad.typeTL == "sub":
+                t *= int(Subgroup.objects.get(group=spr.group).amount)
+            time += t
+        hours.append([prof.id,time])
     context = {
         "spreads" : spreads,
         "profs" : profs,
         "status" : status,
+        "groups" : groups,
+        "subgroups" : subgroups,
+        "listSubGrps" : listSubGrps,
+        "hours" : hours,
     }
     return render(request, 'index.html', context)
 
@@ -95,19 +122,21 @@ def caf(request):
     return render(request, 'dict.html', context)
 
 def subject(request):
-
     try:
         removeId = request.GET.get('remove')
         Subject.objects.get(id=int(removeId)).delete()
+        status = "OK"
     except:
         status = "Данная запись не существует"
 
     try:
         new_subject = request.POST.get('attr')
-        p = Subject.objects.create(name=new_subject)
-        status = "Запись вставлена"
+        if new_subject:
+            p = Subject.objects.create(name=new_subject)
+            status = "Запись вставлена"
     except:
         status = "Данная запись уже существует"
+
     subjects = Subject.objects.all()
     context = {
         "title" : "Предметы",
@@ -250,6 +279,26 @@ def group(request):
     }
     return render(request, 'group.html', context)
 
+def subgroup(request):
+
+    try:
+        ID = int(request.POST.get('idSubgroup'))
+        status = ID
+        amount = int(request.POST.get('number'))
+        subgroup = Subgroup.objects.get(id=ID)
+        subgroup.amount = amount
+        subgroup.save()
+    except:
+       status = "OK"
+
+    subgroups = Subgroup.objects.all()
+    context = {
+        "subgroups" : subgroups,
+        "status" : status,
+        "menu" : "group",
+    }
+    return render(request, 'subgroup.html', context)
+
 def loadUnit(request):
 
     try:
@@ -270,7 +319,7 @@ def loadUnit(request):
             if hours != 0:
                 TP = typeLoad.get(id=t)
                 loadUnit = LoadUnit.objects.create(subject=subject, caf=caf, formPass=formPass, sem=sem, typeLoad=TP, hours=hours, grade = grade)
-                if TP.typeTL == "non":
+                if TP.typeTL != "all":
                     groups = Group.objects.all().filter(caf=caf, sem=sem, grade = grade)
                     for gr in groups:
                         Spread.objects.create(loadUnit=loadUnit, group=gr)
@@ -319,6 +368,7 @@ def loadUnit(request):
         "loadUnits" : loadUnits,
         "subjects" : subjects,
         "cafs" : cafs,
+        "groups" : groups,
         "semesters" : semesters,
         "formPasss" : formPasss,
         "typeLoads" : typeLoads,

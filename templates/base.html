@@ -38,16 +38,17 @@
 
 							{% if menu = "prof" %}
 								<li><a href="/prof"><b>Преподаватели</b></a></li>
-								<li><a href="/prof/degree">Степень</a></li>
-								<li><a href="/prof/post">Должность</a></li>
+								<li><a href="/prof/degree">Степени</a></li>
+								<li><a href="/prof/post">Должности</a></li>
 							{% elif menu = "subject" %}
 								<li><a href="/loadunit"><b>Нагрузочные единицы</b></a></li>
-								<li><a href="/loadunit/subject">Предмет</a></li>
+								<li><a href="/loadunit/subject">Предметы</a></li>
 								<li><a href="/loadunit/formpass">Форма сдачи</a></li>
 								<li><a href="/loadunit/typeload">Тип нагрузки</a></li>
 							{% elif menu = "group" %}
-								<li><a href="/group"><b>Группа</b></a></li>
-								<li><a href="/group/caf">Кафедра</a></li>
+								<li><a href="/group"><b>Группы</b></a></li>
+								<li><a href="/group/subgroup">Подгруппы</a></li>
+								<li><a href="/group/caf">Кафедры</a></li>
 							{% else %}
 								<li><a href="/"><b>Расчет нагрузки</a></li>
 							{% endif %}										
