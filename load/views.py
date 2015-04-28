@@ -5,6 +5,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from load.models import Posts, Degrees, Professors, Caf, Subject, FormPass, TypeLoad, LoadUnit, Group, Spread, Subgroup
 import codecs
+import xlwt
+from datetime import datetime
 
 
 def index(request):
@@ -38,7 +40,7 @@ def index(request):
         amount = int(request.POST.get('number'))
         Subgroup.objects.create(group=Group.objects.get(id=group), amount=amount)
     except:
-       status = "OK"
+        status = "OK"
 
     spreads = Spread.objects.all().order_by('loadUnit','group')
     groups = Group.objects.all()
@@ -67,6 +69,87 @@ def index(request):
         "listSubGrps" : listSubGrps,
         "hours" : hours,
     }
+
+    # save into xls
+
+    style_full = style_antibottom = style_antitop = style_top = style_bottom = style_left = style_right = style_topleft = style_topright = style_bottomleft = style_bottomright = style_clear = xlwt.easyxf('font: name Times New Roman, color-index black, bold on', num_format_str='#,##0.00')
+    style_red = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0.00')
+
+    borders_full = xlwt.Borders()
+    borders_full.bottom = borders_full.top = borders_full.left = borders_full.right = xlwt.Borders.MEDIUM
+    style_full.borders = borders_full
+
+    borders_top = xlwt.Borders()
+    borders_top.top = xlwt.Borders.MEDIUM
+    style_top.borders = borders_top
+
+    borders_bottom = xlwt.Borders()
+    borders_bottom.bottom = xlwt.Borders.MEDIUM
+    style_bottom.borders = borders_bottom
+    
+    borders_left = xlwt.Borders()
+    borders_left.left = xlwt.Borders.MEDIUM
+    style_left.left = borders_left
+    
+    borders_right = xlwt.Borders()
+    borders_right.top = xlwt.Borders.MEDIUM
+    style_right.borders = borders_right
+    
+    borders_topleft = xlwt.Borders()
+    borders_topleft.top = borders_topleft.left = xlwt.Borders.MEDIUM
+    style_topleft.borders = borders_topleft
+
+    borders_topright = xlwt.Borders()
+    borders_topright.top = borders_topright.right = xlwt.Borders.MEDIUM
+    style_topright.borders = borders_topright
+
+    borders_bottomleft = xlwt.Borders()
+    borders_bottomleft.top = borders_bottomleft.left = xlwt.Borders.MEDIUM
+    style_bottomleft.borders = borders_bottomleft
+
+    borders_bottomright = xlwt.Borders()
+    borders_bottomright.top = borders_bottomright.right = xlwt.Borders.MEDIUM
+    style_bottomright.borders = borders_bottomright
+
+    borders_antibottom = xlwt.Borders()
+    borders_antibottom.top = borders_antibottom.left = borders_antibottom.right = xlwt.Borders.MEDIUM
+    style_antibottom.borders = borders_antibottom
+
+    borders_antitop = xlwt.Borders()
+    borders_antitop.bottom = borders_antitop.left = borders_antitop.right = xlwt.Borders.MEDIUM
+    style_antitop.borders = borders_antitop
+
+    wb = xlwt.Workbook()
+    ws = wb.add_sheet('Load')
+
+    ws.col(0).width = 64*30
+    ws.col(1).width = 90*30
+    ws.col(2).width = 70*30
+    ws.col(3).width = 30*30
+    ws.col(4).width = 90*30
+    ws.col(5).width = 70*30
+    ws.col(6).width = 30*30
+    ws.col(7).width = 64*30
+
+    ws.write_merge(0, 0, 0, 7, u"ФИО, степень, должность", style=style_full)
+    ws.write_merge(1, 2, 0, 0, u"Нагрузка",style=style_full)
+    ws.write_merge(1, 1, 1, 3, u"1 семестр",style=style_antibottom)
+    ws.write_merge(1, 1, 4, 6, u"2 семестр",style=style_antibottom)
+    ws.write_merge(1, 2, 7, 7, u"Итого:",style=style_full)
+    ws.write(2, 1, u"Предмет",style=style_bottomleft)
+    ws.write(2, 2, u"Предмет",style=style_bottom)
+    ws.write(2, 3, u"Часы",style=style_bottomright)
+    ws.write(2, 4, u"Предмет",style=style_bottomleft)
+    ws.write(2, 5, u"Предмет",style=style_bottom)
+    ws.write(2, 6, u"Часы",style=style_bottomright)
+
+    # for i, spread in enumerate(spreads):
+    #     ws.write(i+1,1,spread.loadUnit.subject.name)
+    #     ws.write(i+1,2,spread.loadUnit.typeLoad.name)
+
+    wb.save('static/example.xls')
+
+
     return render(request, 'index.html', context)
 
 def prof(request):
