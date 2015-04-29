@@ -28,6 +28,8 @@
 						<a href="/loadunit">Предметы</a></li>
 					  <li {% if menu = "" %} class="active" {% endif %}>
 						<a href="/">Расчет нагрузки</a></li>
+					  <li {% if menu = "report" %} {% endif %}>
+						<a href="/report">Отчет</a></li>
 					</ul>
 				</div>
 			</div>
@@ -49,13 +51,13 @@
 								<li><a href="/group"><b>Группы</b></a></li>
 								<li><a href="/group/subgroup">Подгруппы</a></li>
 								<li><a href="/group/caf">Кафедры</a></li>
-							{% else %}
+							{% elif menu = "" %}
 								<li><a href="/"><b>Расчет нагрузки</a></li>
 							{% endif %}										
 						</ul>
 					</div>
 				{% endif %}
-				<div class="span{% if menu %}10{% else %}12{% endif %}">
+				<div class='span{% if menu and menu != "report" %}10{% else %}12{% endif %}'>
 					{% block main %}{% endblock %}
 				</div>
 			</div>

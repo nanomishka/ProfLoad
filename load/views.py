@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from load.models import Posts, Degrees, Professors, Caf, Subject, FormPass, TypeLoad, LoadUnit, Group, Spread, Subgroup
 import codecs
+import xlwt
 
 
 def index(request):
@@ -392,3 +393,212 @@ def spread(request):
         "profs" : profs,
     }
     return render(request, 'spread.html', context)
+
+def report(request):
+    DATA = []
+    spreads = Spread.objects.filter(prof__id__gt=0).order_by("prof__last_name")
+    groups = Group.objects.all()
+    profs = spreads.values('prof').distinct()
+    status = profs
+    status = []
+    for prof in profs:
+        cur = {}      
+
+        pr = Professors.objects.get(id=int(prof["prof"]))
+        cur["name"] = pr.last_name+" "+pr.first_name+" "+pr.middle_name+", "+pr.post.name+", "+pr.degree.name
+
+        spr = spreads.filter(prof__id=int(prof["prof"]))
+        types = spr.values('loadUnit__typeLoad__name').distinct()
+        cur["spread"] = []
+        sum1=0
+        sum2=0
+        for tp in types:
+            sub = spr.filter(loadUnit__typeLoad__name=tp["loadUnit__typeLoad__name"])
+            sub1 = []
+            sub2 = []
+            for spliter in sub:
+                if spliter.loadUnit.sem % 2 == 0:
+                    sub2.append(spliter)
+                else:
+                    sub1.append(spliter)
+            size = max(len(sub1),len(sub2))
+            lines = []
+            hourSum1 = 0
+            hourSum2 = 0
+            for i in range(0, size):
+                line = {}
+                if i < len(sub1):
+                    line["sub1"] = sub1[i].loadUnit.subject.name
+                    factor=1
+                    if sub1[i].loadUnit.typeLoad.typeTL == "all":
+                        gr1=groups.filter(caf=sub1[i].loadUnit.caf,sem=sub1[i].loadUnit.sem,grade=sub1[i].loadUnit.grade)
+                    else:
+                        gr1=groups.filter(id=sub1[i].group.id)
+                        if sub1[i].loadUnit.typeLoad.typeTL == "sub":
+                            factor = Subgroup.objects.get(group_id=gr1[0].id).amount
+
+                    line["gr1"] = []
+                    for g in gr1:
+                        postfix = ""
+                        if g.grade == "b":
+                            postfix += u'\u0411' # "Б"
+                        elif g.grade == "m":
+                            postfix += u'\u041c' # "M"
+                        if factor > 1:
+                            postfix += " ("+str(factor)+")"
+                        line["gr1"].append(g.caf.name+"-"+str(g.sem)+str(g.number)+postfix)
+                    line["hour1"] = sub1[i].loadUnit.hours*factor
+                    hourSum1 += line["hour1"]
+
+                if i < len(sub2):
+                    line["sub2"] = sub2[i].loadUnit.subject.name
+                    factor=1
+                    if sub2[i].loadUnit.typeLoad.typeTL == "all":
+                        gr2=groups.filter(caf=sub2[i].loadUnit.caf,sem=sub2[i].loadUnit.sem,grade=sub2[i].loadUnit.grade)
+                    else:
+                        gr2=groups.filter(id=sub2[i].group.id)
+                        if sub2[i].loadUnit.typeLoad.typeTL == "sub":
+                            factor = Subgroup.objects.get(group_id=gr2[0].id).amount
+
+                    line["gr2"] = []
+                    for g in gr2:
+                        postfix = ""
+                        if g.grade == "b":
+                            postfix += u'\u0411' # "Б"
+                        elif g.grade == "m":
+                            postfix += u'\u041c' # "M"
+                        if factor > 1:
+                            postfix += " ("+str(factor)+")"
+                        line["gr2"].append(g.caf.name+"-"+str(g.sem)+str(g.number)+postfix)
+                    line["hour2"] = sub2[i].loadUnit.hours*factor
+                    hourSum2 += line["hour2"]
+
+                lines.append(line)
+            cur["spread"].append({"typeload":tp["loadUnit__typeLoad__name"],'subs':lines, 
+                "hourSum1": hourSum1, "hourSum2": hourSum2})
+            sum1 += hourSum1
+            sum2 += hourSum2
+        cur["sum1"] = sum1
+        cur["sum2"] = sum2
+        DATA.append(cur)
+
+    context = {
+        "spreads" : spreads,
+        "data" : DATA,
+        "status" : status,
+        "menu" : "report"
+    }
+
+    # save into xls
+
+    style_full = style_antibottom = style_antitop = style_top = style_bottom = style_left = style_right = style_topleft = style_topright = style_bottomleft = style_bottomright = style_clear = xlwt.easyxf('font: name Times New Roman, color-index black, bold on', num_format_str='#,##0.00')
+    style_red = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0.00')
+
+    borders_full = xlwt.Borders()
+    borders_full.bottom = borders_full.top = borders_full.left = borders_full.right = xlwt.Borders.MEDIUM
+    style_full.borders = style_red = borders_full
+
+    borders_top = xlwt.Borders()
+    borders_top.top = xlwt.Borders.MEDIUM
+    style_top.borders = borders_top
+
+    borders_bottom = xlwt.Borders()
+    borders_bottom.bottom = xlwt.Borders.MEDIUM
+    style_bottom.borders = borders_bottom
+    
+    borders_left = xlwt.Borders()
+    borders_left.left = xlwt.Borders.MEDIUM
+    style_left.left = borders_left
+    
+    borders_right = xlwt.Borders()
+    borders_right.top = xlwt.Borders.MEDIUM
+    style_right.borders = borders_right
+    
+    borders_topleft = xlwt.Borders()
+    borders_topleft.top = borders_topleft.left = xlwt.Borders.MEDIUM
+    style_topleft.borders = borders_topleft
+
+    borders_topright = xlwt.Borders()
+    borders_topright.top = borders_topright.right = xlwt.Borders.MEDIUM
+    style_topright.borders = borders_topright
+
+    borders_bottomleft = xlwt.Borders()
+    borders_bottomleft.top = borders_bottomleft.left = xlwt.Borders.MEDIUM
+    style_bottomleft.borders = borders_bottomleft
+
+    borders_bottomright = xlwt.Borders()
+    borders_bottomright.top = borders_bottomright.right = xlwt.Borders.MEDIUM
+    style_bottomright.borders = borders_bottomright
+
+    borders_antibottom = xlwt.Borders()
+    borders_antibottom.top = borders_antibottom.left = borders_antibottom.right = xlwt.Borders.MEDIUM
+    style_antibottom.borders = borders_antibottom
+
+    borders_antitop = xlwt.Borders()
+    borders_antitop.bottom = borders_antitop.left = borders_antitop.right = xlwt.Borders.MEDIUM
+    style_antitop.borders = borders_antitop
+
+    wb = xlwt.Workbook()
+    ws = wb.add_sheet('Load')
+
+    ws.col(0).width = 100*30
+    ws.col(1).width = 120*30
+    ws.col(2).width = 80*30
+    ws.col(3).width = 60*30
+    ws.col(4).width = 120*30
+    ws.col(5).width = 80*30
+    ws.col(6).width = 60*30
+    ws.col(7).width = 60*30
+
+    y = 0
+    for obj in DATA:
+        ws.write_merge(y, y, 0, 7, obj["name"], style=style_full)
+        ws.write_merge(y+1, y+2, 0, 0, u"Нагрузка",style=style_full)
+        ws.write_merge(y+1, y+1, 1, 3, u"Осенний семестр",style=style_antibottom)
+        ws.write_merge(y+1, y+1, 4, 6, u"Весенний семестр",style=style_antibottom)
+        ws.write_merge(y+1, y+2, 7, 7, u"Итого:",style=style_full)
+        ws.write(y+2, 1, u"Предмет",style=style_bottomleft)
+        ws.write(y+2, 2, u"Группы",style=style_bottom)
+        ws.write(y+2, 3, u"Часы",style=style_bottomright)
+        ws.write(y+2, 4, u"Предмет",style=style_bottomleft)
+        ws.write(y+2, 5, u"Группы",style=style_bottom)
+        ws.write(y+2, 6, u"Часы",style=style_bottomright)
+        y += 3
+
+        for spr in obj["spread"]:
+            ws.write_merge(y, y+len(spr["subs"]), 0, 0, spr["typeload"],style=style_full)
+            ws.write_merge(y, y-1+len(spr["subs"]), 7,7, "",style=style_full)
+            for sub in spr["subs"]:
+                if "sub1" in sub:
+                    ws.write(y, 1, sub["sub1"] ,style=style_topleft)
+                    ws.write(y, 2, sub["gr1"],style=style_top)
+                    ws.write(y, 3, sub["hour1"],style=style_topright)
+                else:
+                    ws.write(y, 1, "",style=style_topleft)
+                    ws.write(y, 2, "",style=style_top)
+                    ws.write(y, 3, "",style=style_topright)
+                if "sub2" in sub:
+                    ws.write(y, 4, sub["sub2"],style=style_topleft)
+                    ws.write(y, 5, sub["gr2"],style=style_top)
+                    ws.write(y, 6, sub["hour2"],style=style_topright)
+                else:
+                    ws.write(y, 4, "",style=style_topleft)
+                    ws.write(y, 5, "",style=style_top)
+                    ws.write(y, 6, "",style=style_topright)
+                y += 1   
+            ws.write_merge(y, y, 1, 2, u"Итого",style=style_topleft)
+            ws.write(y, 3, spr["hourSum1"],style=style_topright)
+            ws.write_merge(y, y, 4, 5, u"Итого",style=style_topleft)
+            ws.write(y, 6, spr["hourSum2"],style=style_topright)
+            ws.write(y, 7, spr["hourSum2"] + spr["hourSum1"],style=style_topright)
+            y += 1
+        ws.write(y, 0, "",style=style_topleft)
+        ws.write_merge(y, y, 1, 2, u"Итого за осенний семестр",style=style_topleft)
+        ws.write(y, 3, obj["sum1"],style=style_topright)
+        ws.write_merge(y, y, 4, 5, u"Итого за весенний семестр",style=style_topleft)
+        ws.write(y, 6, obj["sum2"],style=style_topright)
+        ws.write(y, 7, obj["sum2"]+obj["sum1"],style=style_topright)
+        y += 3
+
+    wb.save('static/report.xls')
+    return render(request, 'report.html', context)

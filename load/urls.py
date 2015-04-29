@@ -15,4 +15,6 @@ urlpatterns = patterns('',
     url(r'^loadunit/typeload$', views.typeload, name='typeload'),
     url(r'^loadunit/formpass$', views.formpass, name='formpass'),
     url(r'^spread$', views.spread, name='spread'),
+    url(r'^report$', views.report, name='report')
+
 )
