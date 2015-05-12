@@ -238,7 +238,7 @@ def typeload(request):
         status = "Запись вставлена"
     except:
         status = "Данная запись уже существует"
-    typeLoads = TypeLoad.objects.all()
+    typeLoads = TypeLoad.objects.all().order_by("-sort")
     context = {
         "title" : "Типы нагрузки",
         "items" : typeLoads,
@@ -248,6 +248,29 @@ def typeload(request):
         "menu" : "subject",
     }
     return render(request, 'typeload.html', context)
+
+def sortload(request):
+    try:
+        listSort = request.POST.getlist('sort')
+        status = listSort
+        length = len(listSort)
+        if length > 0 :
+            for item in listSort:
+                typeLoad = TypeLoad.objects.get(name=item);
+                typeLoad.sort = length
+                length -=1
+                typeLoad.save()
+                status = "OK"
+    except:
+        status = "" 
+
+    typeLoads = TypeLoad.objects.all().order_by("-sort")
+    context = {
+        "items" : typeLoads,
+        "menu" : "subject",
+        "status" : status,
+    }
+    return render(request, 'sortload.html', context)
 
 def group(request):
 
@@ -408,7 +431,7 @@ def report(request):
         cur["name"] = pr.last_name+" "+pr.first_name+" "+pr.middle_name+", "+pr.post.name+", "+pr.degree.name
 
         spr = spreads.filter(prof__id=int(prof["prof"]))
-        types = spr.values('loadUnit__typeLoad__name').distinct()
+        types = spr.values('loadUnit__typeLoad__name').order_by("-loadUnit__typeLoad__sort").distinct()
         cur["spread"] = []
         sum1=0
         sum2=0

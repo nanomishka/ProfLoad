@@ -43,6 +43,7 @@ class TypeLoad(models.Model):
 	name = models.CharField(max_length=20, unique=True, blank=False)
 	GRADES = (('all','all'),('sub','subgroup'),('non','usual'))
 	typeTL = models.CharField(max_length=3, choices=GRADES,default='non')
+	sort = models.IntegerField(default=0)
 
 class LoadUnit(models.Model):
 	subject = models.ForeignKey(Subject)

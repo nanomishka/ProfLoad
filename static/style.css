@@ -66,3 +66,27 @@ body {
 	line-height: 14px;
 	vertical-align: text-top;
 }
+
+.sortable {
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+	width: 60%; 
+}
+
+.btn_sort {
+	width: 250px;
+	height: 25px;
+	display: block;
+	margin: 0 5px 5px 5px; 
+	padding: 5px; 
+}
+
+.placeholder {
+	width: 250px;
+	height: 27px;
+	display: block;
+	margin: 0 5px 5px 5px; 
+	padding: 5px; 
+	background-color: #888;
+}

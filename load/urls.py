@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^loadunit$', views.loadUnit, name='loadunit'),
     url(r'^loadunit/subject$', views.subject, name='subject'),
     url(r'^loadunit/typeload$', views.typeload, name='typeload'),
+    url(r'^loadunit/sortload$', views.sortload, name='sortload'),
     url(r'^loadunit/formpass$', views.formpass, name='formpass'),
     url(r'^spread$', views.spread, name='spread'),
     url(r'^report$', views.report, name='report')

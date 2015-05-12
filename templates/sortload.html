@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h4>Сортировка типов нагрузки</h4>
+
+{% if status == "OK" %}
+<div class="alert alert-success" style="width: 200px;"><h4>Сохранено</h4></div>
+{% endif %}
+
+<ul class="sortable">
+    {% for item in items %}
+    <li class="btn btn_sort --data-">{{item.name}}</li>
+    {% endfor %}
+</ul>
+</br>
+
+<form action="" method="post">
+    <fieldset>
+        <button type="submit" class="btn-large btn-primary" onclick="repr()">Сохранить сортировку</button>
+    </fieldset>
+</form>
+
+
+
+<script>
+    data = []
+    $(function() {
+        $(".sortable").sortable({
+            placeholder: "placeholder hero-unit",
+            axis: "y",
+            stop: function( event, ui ) {
+                $(".alert").remove();
+            }
+        });
+        $(".sortable").disableSelection();
+    });
+
+    function repr() {
+        data = []
+        $(".sortable li").each(function( index ) {
+            $("form").append('<input type="hidden" name="sort" value="'+this.innerHTML+'"">');
+            data.push(this.innerHTML);
+        });
+        console.info(data);
+    }
+</script>
+{% endblock %}
