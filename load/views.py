@@ -468,8 +468,8 @@ def report(request):
                         elif g.grade == "m":
                             postfix += u'\u041c' # "M"
                         if factor > 1:
-                            postfix += " ("+str(factor)+")"
-                        line["gr1"].append(g.caf.name+"-"+str(g.sem)+str(g.number)+postfix)
+                            postfix += "("+str(factor)+")"
+                        line["gr1"].append(g.caf.name+"-"+str(g.sem)+str(g.number)+postfix+"["+"] ")
                     line["hour1"] = sub1[i].loadUnit.hours*factor
                     hourSum1 += line["hour1"]
 
@@ -491,8 +491,9 @@ def report(request):
                         elif g.grade == "m":
                             postfix += u'\u041c' # "M"
                         if factor > 1:
-                            postfix += " ("+str(factor)+")"
-                        line["gr2"].append(g.caf.name+"-"+str(g.sem)+str(g.number)+postfix)
+                            postfix += "("+str(factor)+")"
+                        line["gr2"].append(g.caf.name+"-"+str(g.sem)+str(g.number)+postfix
+                            +" ["+str(g.amount)+"] ")
                     line["hour2"] = sub2[i].loadUnit.hours*factor
                     hourSum2 += line["hour2"]
 
@@ -514,51 +515,59 @@ def report(request):
 
     # save into xls
 
-    style_full = style_antibottom = style_antitop = style_top = style_bottom = style_left = style_right = style_topleft = style_topright = style_bottomleft = style_bottomright = style_clear = xlwt.easyxf('font: name Times New Roman, color-index black, bold on', num_format_str='#,##0.00')
-    style_red = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0.00')
+    style_full  =  style_antibottom = style_antitop = style_top = style_bottom = style_left = style_right = style_topleft = style_topright = style_bottomleft = style_bottomright = style_clear = xlwt.easyxf('font: name Times New Roman, color-index black, bold off', num_format_str='#,##0')
+    style_red = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0')
+    style_bold = xlwt.easyxf('font: name Times New Roman, color-index black, bold on', num_format_str='#,##0')
+    style_wrap = xlwt.easyxf('font: name Times New Roman, color-index black, bold off', num_format_str='#,##0')
+
+    align = xlwt.Alignment()
+    align.wrap = 1
+    align.horz = xlwt.Alignment.HORZ_JUSTIFIED
+    align.vert = xlwt.Alignment.VERT_JUSTIFIED
+    style_wrap.alignment = align
 
     borders_full = xlwt.Borders()
-    borders_full.bottom = borders_full.top = borders_full.left = borders_full.right = xlwt.Borders.MEDIUM
-    style_full.borders = style_red = borders_full
+    borders_full.bottom = borders_full.top = borders_full.left = borders_full.right = xlwt.Borders.THIN
+    style_full.borders = style_red.borders = style_bold.borders = style_wrap.borders = borders_full
 
     borders_top = xlwt.Borders()
-    borders_top.top = xlwt.Borders.MEDIUM
+    borders_top.top = xlwt.Borders.THIN
     style_top.borders = borders_top
 
     borders_bottom = xlwt.Borders()
-    borders_bottom.bottom = xlwt.Borders.MEDIUM
+    borders_bottom.bottom = xlwt.Borders.THIN
     style_bottom.borders = borders_bottom
     
     borders_left = xlwt.Borders()
-    borders_left.left = xlwt.Borders.MEDIUM
+    borders_left.left = xlwt.Borders.THIN
     style_left.left = borders_left
     
     borders_right = xlwt.Borders()
-    borders_right.top = xlwt.Borders.MEDIUM
+    borders_right.top = xlwt.Borders.THIN
     style_right.borders = borders_right
     
     borders_topleft = xlwt.Borders()
-    borders_topleft.top = borders_topleft.left = xlwt.Borders.MEDIUM
+    borders_topleft.top = borders_topleft.left = xlwt.Borders.THIN
     style_topleft.borders = borders_topleft
 
     borders_topright = xlwt.Borders()
-    borders_topright.top = borders_topright.right = xlwt.Borders.MEDIUM
+    borders_topright.top = borders_topright.right = xlwt.Borders.THIN
     style_topright.borders = borders_topright
 
     borders_bottomleft = xlwt.Borders()
-    borders_bottomleft.top = borders_bottomleft.left = xlwt.Borders.MEDIUM
+    borders_bottomleft.top = borders_bottomleft.left = xlwt.Borders.THIN
     style_bottomleft.borders = borders_bottomleft
 
     borders_bottomright = xlwt.Borders()
-    borders_bottomright.top = borders_bottomright.right = xlwt.Borders.MEDIUM
+    borders_bottomright.top = borders_bottomright.right = xlwt.Borders.THIN
     style_bottomright.borders = borders_bottomright
 
     borders_antibottom = xlwt.Borders()
-    borders_antibottom.top = borders_antibottom.left = borders_antibottom.right = xlwt.Borders.MEDIUM
+    borders_antibottom.top = borders_antibottom.left = borders_antibottom.right = xlwt.Borders.THIN
     style_antibottom.borders = borders_antibottom
 
     borders_antitop = xlwt.Borders()
-    borders_antitop.bottom = borders_antitop.left = borders_antitop.right = xlwt.Borders.MEDIUM
+    borders_antitop.bottom = borders_antitop.left = borders_antitop.right = xlwt.Borders.THIN
     style_antitop.borders = borders_antitop
 
     wb = xlwt.Workbook()
@@ -566,26 +575,26 @@ def report(request):
 
     ws.col(0).width = 100*30
     ws.col(1).width = 120*30
-    ws.col(2).width = 80*30
+    ws.col(2).width = 125*30
     ws.col(3).width = 60*30
     ws.col(4).width = 120*30
-    ws.col(5).width = 80*30
+    ws.col(5).width = 125*30
     ws.col(6).width = 60*30
     ws.col(7).width = 60*30
 
     y = 0
     for obj in DATA:
-        ws.write_merge(y, y, 0, 7, obj["name"], style=style_full)
-        ws.write_merge(y+1, y+2, 0, 0, u"Нагрузка",style=style_full)
-        ws.write_merge(y+1, y+1, 1, 3, u"Осенний семестр",style=style_antibottom)
-        ws.write_merge(y+1, y+1, 4, 6, u"Весенний семестр",style=style_antibottom)
-        ws.write_merge(y+1, y+2, 7, 7, u"Итого:",style=style_full)
-        ws.write(y+2, 1, u"Предмет",style=style_bottomleft)
-        ws.write(y+2, 2, u"Группы",style=style_bottom)
-        ws.write(y+2, 3, u"Часы",style=style_bottomright)
-        ws.write(y+2, 4, u"Предмет",style=style_bottomleft)
-        ws.write(y+2, 5, u"Группы",style=style_bottom)
-        ws.write(y+2, 6, u"Часы",style=style_bottomright)
+        ws.write_merge(y, y, 0, 7, obj["name"], style=style_bold)
+        ws.write_merge(y+1, y+2, 0, 0, u"Нагрузка",style=style_bold)
+        ws.write_merge(y+1, y+1, 1, 3, u"Осенний семестр",style=style_bold)
+        ws.write_merge(y+1, y+1, 4, 6, u"Весенний семестр",style=style_bold)
+        ws.write_merge(y+1, y+2, 7, 7, u"Итого:",style=style_bold)
+        ws.write(y+2, 1, u"Предмет",style=style_bold)
+        ws.write(y+2, 2, u"Группы",style=style_bold)
+        ws.write(y+2, 3, u"Часы",style=style_bold)
+        ws.write(y+2, 4, u"Предмет",style=style_bold)
+        ws.write(y+2, 5, u"Группы",style=style_bold)
+        ws.write(y+2, 6, u"Часы",style=style_bold)
         y += 3
 
         for spr in obj["spread"]:
@@ -594,7 +603,7 @@ def report(request):
             for sub in spr["subs"]:
                 if "sub1" in sub:
                     ws.write(y, 1, sub["sub1"] ,style=style_topleft)
-                    ws.write(y, 2, sub["gr1"],style=style_top)
+                    ws.write(y, 2, sub["gr1"],style=style_wrap)
                     ws.write(y, 3, sub["hour1"],style=style_topright)
                 else:
                     ws.write(y, 1, "",style=style_topleft)
@@ -602,25 +611,25 @@ def report(request):
                     ws.write(y, 3, "",style=style_topright)
                 if "sub2" in sub:
                     ws.write(y, 4, sub["sub2"],style=style_topleft)
-                    ws.write(y, 5, sub["gr2"],style=style_top)
+                    ws.write(y, 5, sub["gr2"],style=style_wrap)
                     ws.write(y, 6, sub["hour2"],style=style_topright)
                 else:
                     ws.write(y, 4, "",style=style_topleft)
                     ws.write(y, 5, "",style=style_top)
                     ws.write(y, 6, "",style=style_topright)
                 y += 1   
-            ws.write_merge(y, y, 1, 2, u"Итого",style=style_topleft)
-            ws.write(y, 3, spr["hourSum1"],style=style_topright)
-            ws.write_merge(y, y, 4, 5, u"Итого",style=style_topleft)
-            ws.write(y, 6, spr["hourSum2"],style=style_topright)
-            ws.write(y, 7, spr["hourSum2"] + spr["hourSum1"],style=style_topright)
+            ws.write_merge(y, y, 1, 2, u"Итого:",style=style_bold)
+            ws.write(y, 3, spr["hourSum1"],style=style_bold)
+            ws.write_merge(y, y, 4, 5, u"Итого:",style=style_bold)
+            ws.write(y, 6, spr["hourSum2"],style=style_bold)
+            ws.write(y, 7, spr["hourSum2"] + spr["hourSum1"],style=style_bold)
             y += 1
         ws.write(y, 0, "",style=style_topleft)
-        ws.write_merge(y, y, 1, 2, u"Итого за осенний семестр",style=style_topleft)
-        ws.write(y, 3, obj["sum1"],style=style_topright)
-        ws.write_merge(y, y, 4, 5, u"Итого за весенний семестр",style=style_topleft)
-        ws.write(y, 6, obj["sum2"],style=style_topright)
-        ws.write(y, 7, obj["sum2"]+obj["sum1"],style=style_topright)
+        ws.write_merge(y, y, 1, 2, u"Итого за осенний семестр:",style=style_bold)
+        ws.write(y, 3, obj["sum1"],style=style_bold)
+        ws.write_merge(y, y, 4, 5, u"Итого за весенний семестр:",style=style_bold)
+        ws.write(y, 6, obj["sum2"],style=style_bold)
+        ws.write(y, 7, obj["sum2"]+obj["sum1"],style=style_red)
         y += 3
 
     wb.save('static/report.xls')
