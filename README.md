@@ -75,3 +75,19 @@ _Подробнее:_
 	`$ python manage.py runserver 8080`
 
 ###### Система настроена и находится по адресу http://127.0.0.1:8080/
+_________________________________________________________
+####  Обновление системы:
+
+1. скачиваем к себе новую версию системы
+https://github.com/nanomishka/ProfLoad
+
+!!!в среде mysql выполняем запросы (можно войти через терминал `python manage.py dbshell`)
+
+###### add new column to spread
+
+`ALTER TABLE load_spread ADD hours INT(11) NOT NULL;`
+	
+###### copy hours from loadunits to spreads
+	
+`UPDATE load_spread ls SET hours = (SELECT hours FROM load_loadunit ll where ls.loadUnit_id = ll.id);`
+
