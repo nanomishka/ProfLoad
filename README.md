@@ -81,12 +81,8 @@ _________________________________________________________
 1. скачиваем к себе новую версию системы
 https://github.com/nanomishka/ProfLoad
 
-!!!в среде mysql выполняем запросы (можно войти через терминал `python manage.py dbshell`)
+!!!в среде mysql выполняем запрос (можно войти через терминал `python manage.py dbshell`)
 
-###### add new column to spread
-
-`ALTER TABLE load_spread ADD hours INT(11) NOT NULL;`
-	
 ###### copy hours from loadunits to spreads
 	
 `UPDATE load_spread ls SET hours = (SELECT hours FROM load_loadunit ll where ls.loadUnit_id = ll.id);`
