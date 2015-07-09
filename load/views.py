@@ -494,8 +494,8 @@ def report(request):
                             postfix += u'\u041c' # "M"
                         if factor > 1:
                             postfix += "("+str(factor)+")"
-                        line["gr1"].append(g.caf.name+"-"+str(g.sem)+str(g.number)+postfix+"["+"] ")
-                    line["hour1"] = sub1[i].loadUnit.hours*factor
+                        line["gr1"].append(g.caf.name+"-"+str(g.sem)+str(g.number)+postfix+" ["+str(g.amount)+"] ")
+                    line["hour1"] = sub1[i].hours*factor
                     hourSum1 += line["hour1"]
 
                 if i < len(sub2):
@@ -519,7 +519,7 @@ def report(request):
                             postfix += "("+str(factor)+")"
                         line["gr2"].append(g.caf.name+"-"+str(g.sem)+str(g.number)+postfix
                             +" ["+str(g.amount)+"] ")
-                    line["hour2"] = sub2[i].loadUnit.hours*factor
+                    line["hour2"] = sub2[i].hours*factor
                     hourSum2 += line["hour2"]
 
                 lines.append(line)
