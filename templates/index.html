@@ -14,6 +14,7 @@ data-toggle="modal">Назначить преподавателя</a>
         <th>Тип нагрузки</th>
         <th>Группа</th>
         <th>Часы</th>
+        <th></th>
         <th>Преподаватель</th>
     </tr>
     {% for spread in spreads %}
@@ -46,7 +47,7 @@ data-toggle="modal">Назначить преподавателя</a>
 
             {% endif %}
             </td>
-        <td>{{spread.loadUnit.hours}}
+        <td class="hours">{{spread.hours}}
             {% if spread.loadUnit.typeLoad.typeTL == "sub" %}
                     {% if spread.group in listSubGrps %}
                         {% for sub in subgroups %}
@@ -55,7 +56,11 @@ data-toggle="modal">Назначить преподавателя</a>
                         {% endfor %}
                     {% endif %}
                 {% endif %}
-            </td>
+        </td>
+        <td class="icon">
+            <a href="#" role="button" data-toggle="modal" title="Редактировать" onclick="dataForm({{spread.id}}, {{forloop.counter}});">
+                <i class="icon-edit"></i>
+            </a>
         <td>{% if spread.loadUnit.typeLoad.typeTL == "sub" and spread.group not in listSubGrps %} 
                 <a href="#mySub" role="button" class="btn btn-warning" 
     data-toggle="modal" onclick="clear_form({{spread.group.id}}, {{spread.group.amount}});">Разделить</a>
@@ -88,18 +93,16 @@ data-toggle="modal">Назначить преподавателя</a>
         <div class="modal-body">
 
             <div class="form-group">
-                <label for="middleName" class="col-sm-2 control-label">Преподаватель</label>
-                <select class="span2" name="prof" required>
-                    <option value="" selected>Выбрать</option>
+                <label>Преподаватель</label></br>
+                <table class="table table-hover table_spread">
                     {% for prof in profs %}
-                        <option value="{{ prof.id }}">
-                            {{prof.last_name}}
-                            {{prof.first_name|slice:":1"}}.
-                            {{prof.middle_name|slice:":1"}}.
-                            {% for pr in hours %}{% if pr.0 == prof.id %} ({{pr.1}}) {% endif %}{% endfor %}
-                        </option>
+                        <tr for="1" >
+                            <td><input type='radio' name='prof' id="1" value='{{ prof.id }}'></td>
+                            <td>{{prof.last_name}} {{prof.first_name|slice:":1"}}.{{prof.middle_name|slice:":1"}}.</td>
+                            <td> {% for pr in hours %}{% if pr.0 == prof.id %} ({{pr.1}}) {% endif %}{% endfor %}</td>
+                        </tr>
                     {% endfor %}
-                </select>
+                </table>
             </div>
         </div>
 
@@ -154,6 +157,26 @@ data-toggle="modal">Назначить преподавателя</a>
         $("label[name=count]").text(count);
         $("input[name=idGroup]").val(group)
     }
+
+    function dataForm(id, index) {
+        row = $("tr").eq(index);
+        hours = row.find(".hours").text();
+        row.find(".hours").text("");
+        row.find(".icon").text("");
+        var $field = $("<input type='number' style='width:40px; margin: 0' min=0 id="+id+" name='' value="+hours+" required/>");
+        row.find(".hours").append($field);
+        // alert("id="+id+", count="+index);
+        var $icon = $('<a href="#" id='+id+' onclick="getData('+id+')"><i class="icon-ok"></i></a>');
+        row.find(".icon").append($icon);
+    }
+
+    function getData(id) {
+        hours = $("input[id="+id+"]").val();
+        // console.log($("a[id="+id+"]"));
+        $("a[id="+id+"]").prop("href", '?editId='+id+'&hours='+hours);
+
+    }
+
 
 </script>
 

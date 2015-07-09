@@ -40,6 +40,15 @@ def index(request):
         Subgroup.objects.create(group=Group.objects.get(id=group), amount=amount)
     except:
        status = "OK"
+    # edit hours
+    try:
+        editId = request.GET.get('editId')
+        hours = int(request.GET.get('hours'))
+        loadUnit = Spread.objects.get(id=int(editId))
+        loadUnit.hours = hours
+        loadUnit.save()
+    except:
+        status = "Данная запись не существует"
 
     spreads = Spread.objects.all().order_by('loadUnit','group')
     groups = Group.objects.all()
@@ -48,13 +57,13 @@ def index(request):
     for sub in subgroups:
         listSubGrps.append(sub.group)
 
-    profs = Professors.objects.all()
+    profs = Professors.objects.all().order_by('last_name')
     hours = []
     for prof in profs:
         listSpread = Spread.objects.filter(prof=prof)
         time = 0
         for spr in listSpread:
-            t = int(spr.loadUnit.hours)
+            t = int(spr.hours)
             if spr.loadUnit.typeLoad.typeTL == "sub":
                 t *= int(Subgroup.objects.get(group=spr.group).amount)
             time += t
@@ -86,7 +95,7 @@ def prof(request):
         prof = Professors.objects.create(last_name=lastName, first_name=firstName, middle_name=middleName, post=post, degree=degree)
     except:
        status = "OK"
-    professor = Professors.objects.all()
+    professor = Professors.objects.all().order_by('last_name')
     degrees = Degrees.objects.all()
     posts = Posts.objects.all()
     context = {
@@ -337,18 +346,30 @@ def loadUnit(request):
         formPass = FormPass.objects.get(name=request.POST.get('formPass'))
         sem = int(request.POST.get('sem').split("_", 1)[0])
         grade = request.POST.get('sem').split("_", 1)[1]
+        method = request.POST.get('method')
         typeLoad = TypeLoad.objects.all()
+        
         for t in range(typeLoad.order_by("id")[0].id, typeLoad.order_by("-id")[0].id+1):
             hours = int(request.POST.get('load'+str(t), 0))
             if hours != 0:
-                TP = typeLoad.get(id=t)
-                loadUnit = LoadUnit.objects.create(subject=subject, caf=caf, formPass=formPass, sem=sem, typeLoad=TP, hours=hours, grade = grade)
-                if TP.typeTL != "all":
-                    groups = Group.objects.all().filter(caf=caf, sem=sem, grade = grade)
-                    for gr in groups:
-                        Spread.objects.create(loadUnit=loadUnit, group=gr)
-                else:
-                    Spread.objects.create(loadUnit=loadUnit)
+                if method == "create":
+                    TP = typeLoad.get(id=t)
+                    loadUnit = LoadUnit.objects.create(subject=subject, caf=caf, formPass=formPass, sem=sem, typeLoad=TP, hours=hours, grade = grade)
+                    if TP.typeTL != "all":
+                        groups = Group.objects.all().filter(caf=caf, sem=sem, grade = grade)
+                        for gr in groups:
+                            Spread.objects.create(loadUnit=loadUnit, group=gr, hours=hours)
+                    else:
+                        Spread.objects.create(loadUnit=loadUnit, hours=hours)
+                elif method == "edit":
+                    loadUnit = LoadUnit.objects.get(id=int(request.POST.get('spreadId')))
+                    loadUnit.subject = subject
+                    loadUnit.hours = hours
+                    loadUnit.formPass = formPass
+                    loadUnit.caf = caf
+                    loadUnit.sem = sem
+                    loadUnit.grade = grade
+                    loadUnit.save()
     except:
             status = "error"
 
@@ -366,10 +387,14 @@ def loadUnit(request):
                     loadUnit = LoadUnit.objects.create(subject=load.subject, caf=load.caf, formPass=load.formPass, sem=load.sem, typeLoad=load.typeLoad, hours=amount, grade=load.grade)
                     groups = Group.objects.all().filter(caf=load.caf, sem=load.sem, grade=load.grade)
                     for gr in groups:
-                        Spread.objects.create(loadUnit=loadUnit, group=gr)
+                        Spread.objects.create(loadUnit=loadUnit, group=gr, hours = amount)
                 else:
                     load.hours = amount
                     load.save()
+                    spreads = Spread.objects.all().filter(loadUnit=load)
+                    for spread in spreads:
+                        spread.hours = amount
+                        spread.save()
     except:
         status = "Данная запись не существует"
 
@@ -387,7 +412,7 @@ def loadUnit(request):
         semesters.append({'caf':sem['caf__name'],'sem':sem['sem'], 'grade':sem["grade"], 'count': count })
 
     formPasss = FormPass.objects.all()
-    typeLoads = TypeLoad.objects.all()
+    typeLoads = TypeLoad.objects.all().order_by("-sort")
     context = {
         "loadUnits" : loadUnits,
         "subjects" : subjects,

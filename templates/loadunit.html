@@ -13,30 +13,44 @@
         <th>Тип Нагрузки</th>
         <th>Часы</th>
         <th></th>
+        <th></th>
+        <th></th>
     </tr>
     {% for loadUnit in loadUnits %}
     <tr> 
         <td>{{forloop.counter}}</td>
-        <td>{{loadUnit.subject.name}}</td>
-        <td>{{loadUnit.formPass.name}}</td>
+        <td class="subject">{{loadUnit.subject.name}}</td>
+        <td class="formPass">{{loadUnit.formPass.name}}</td>
         <td>{% for group in groups %}
                 {% if group.caf == loadUnit.caf and group.sem == loadUnit.sem and group.grade == loadUnit.grade%}
                     {{group.caf.name}}-{{group.sem}}{{group.number}}{% if group.grade == "b"%}Б{% elif group.grade == "m"%}М{% endif %}<br>
                 {% endif %}
-            {% endfor %}</td>
-        <td>{{loadUnit.typeLoad.name}}</td>
-        <td>{{loadUnit.hours}}
-                <a href="#split" role="button" data-toggle="modal" onclick="clear_form({{loadUnit.id}}, {{loadUnit.hours}});"><i class="icon-split"></i></a>
+            {% endfor %}
+            <div class="caf" style="display:none">{{loadUnit.caf.name}}</div>
+            <div class="sem" style="display:none">{{loadUnit.sem}}</div>
+            <div class="type" style="display:none">{{loadUnit.grade}}</div>
         </td>
         <td>
-            <a href="?remove={{loadUnit.id}}"><i class="icon-trash"></i></a>
+            {{loadUnit.typeLoad.name}}
+            <div class="typeLoad" style="display:none">{{loadUnit.typeLoad.id}}</div>
         </td>
+        <td class="hours">{{loadUnit.hours}}</td>
+        <td>
+            <a href="#split" role="button" data-toggle="modal" onclick="splitForm({{loadUnit.id}}, {{loadUnit.hours}});" title="Разделить">
+                <i class="icon-split"></i>
+            </a>
+        </td>
+        <td><a href="#myModal" role="button" data-toggle="modal" title="Редактировать" onclick="dataForm({{loadUnit.id}}, {{forloop.counter}});">
+                <i class="icon-edit"></i>
+            </a>
+        </td>
+        <td><a href="?remove={{loadUnit.id}}" title="Удалить"><i class="icon-trash"></i></a></td>
     </tr>
     {% endfor %}
 </table>
 
 <!-- Button for FORM CREATE -->
-<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Добавить нагрузочную единицу</a>
+<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal" onclick="dataForm( 0, 0);">Добавить нагрузочную единицу</a>
 <!-- FORM CREATE -->
 <div id="myModal" class="modal hide fade" tabindex="-1" 
     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -108,9 +122,12 @@
             <button type="submit" class="btn btn-primary">Добавить нагрузочную единицу</button>
         </div>
 
+        <input type="hidden" name="method" value="create">
+        <input type="hidden" name="spreadId">
     </form>
 </div>
 
+<!-- FORM SPLIT -->
 <form action="" method="post">
     <div id="split" class="modal hide fade" tabindex="-1" 
         role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -181,7 +198,7 @@
         }
     }
 
-    function clear_form(spread, count) { 
+    function splitForm(spread, count) { 
         hours=count;
         $("input[name=number]").val(2);
         $(".parts").empty();
@@ -195,6 +212,34 @@
             });
         }
         check(-1);
+    }
+
+    function dataForm(id, index) {
+        form = $("#myModal");
+        $.each(form.find("input[type]"), function(key, input) { input.value = 0; })
+        if ( index == 0 ) {
+            form.find("h3[id=myModalLabel]").text("Добавление нагрузочной единицы");
+            form.find("button[type=submit]").text("Добавить нагрузочную единицу");
+            form.find("input[name=method]").val("create");
+            form.find("select[name=subject]").prop("selectedIndex", 0);
+            form.find("select[name=formPass]").prop("selectedIndex", 0);
+            form.find("select[name=caf]").prop("selectedIndex", 0);
+            form.find("select[name=sem]").prop("selectedIndex", 0);
+        } else {
+            form.find("h3[id=myModalLabel]").text("Редактирование нагрузочной единицы");
+            form.find("button[type=submit]").text("Сохранить изменения");
+            form.find("input[name=method]").val("edit");
+            form.find("input[name=spreadId]").val(id);
+            dataRow = $("tr").eq(index);
+            form.find("select[name=subject]").val(dataRow.find('.subject').text());
+            form.find("select[name=formPass]").val(dataRow.find('.formPass').text());
+            form.find("select[name=caf]").val(dataRow.find('.caf').text());
+            form.find("select[name=sem]").val(dataRow.find('.sem').text()+"_"+dataRow.find('.type').text());
+            form.find("input[name=load"+dataRow.find('.typeLoad').text()+"]").val(dataRow.find('.hours').text());
+
+            $("select[name=sem] option[data-caf!="+dataRow.find('.caf').text()+"]").addClass("select_hidden");
+            $("select[name=sem] option[data-caf="+dataRow.find('.caf').text()+"]").removeClass();
+        }
     }
 
 </script>

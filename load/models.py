@@ -40,7 +40,7 @@ class FormPass(models.Model):
 	name = models.CharField(max_length=20, unique=True, blank=False)
 
 class TypeLoad(models.Model):
-	name = models.CharField(max_length=20, unique=True, blank=False)
+	name = models.CharField(max_length=40, unique=True, blank=False)
 	GRADES = (('all','all'),('sub','subgroup'),('non','usual'))
 	typeTL = models.CharField(max_length=3, choices=GRADES,default='non')
 	sort = models.IntegerField(default=0)
@@ -59,5 +59,6 @@ class Spread(models.Model):
 	loadUnit = models.ForeignKey(LoadUnit)
 	group = models.ForeignKey(Group, null=True)
 	prof = models.ForeignKey(Professors, null=True)
+	hours = models.IntegerField()
 	class Meta:
 		unique_together = ('loadUnit', 'group')
