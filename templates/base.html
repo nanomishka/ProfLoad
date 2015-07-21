@@ -26,9 +26,9 @@
 						<a href="/group">Группы</a></li>
 					  <li {% if menu = "subject" %} class="active" {% endif %}>
 						<a href="/loadunit">Предметы</a></li>
-					  <li {% if menu = "" %} class="active" {% endif %}>
-						<a href="/">Расчет нагрузки</a></li>
-					  <li {% if menu = "report" %} {% endif %}>
+					  <li {% if not menu %} class="active" {% endif %}>
+						<a href="/">Распределение нагрузки</a></li>
+					  <li {% if menu = "report" %} class="active" {% endif %}>
 						<a href="/report">Отчет</a></li>
 					</ul>
 				</div>

@@ -15,7 +15,9 @@ data-toggle="modal">Назначить преподавателя</a>
         <th>Группа</th>
         <th>Часы</th>
         <th></th>
-        <th>Преподаватель</th>
+        <th></th>
+        <th></th>
+        <th></th>
     </tr>
     {% for spread in spreads %}
     <tr> 
@@ -61,6 +63,12 @@ data-toggle="modal">Назначить преподавателя</a>
             <a href="#" role="button" data-toggle="modal" title="Редактировать" onclick="dataForm({{spread.id}}, {{forloop.counter}});">
                 <i class="icon-edit"></i>
             </a>
+        </td>
+        <td>
+            <a href="#split" role="button" data-toggle="modal" onclick="splitForm({{spread.id}}, {{spread.hours}});" title="Разделить">
+                <i class="icon-split"></i>
+            </a>
+        </td>
         <td>{% if spread.loadUnit.typeLoad.typeTL == "sub" and spread.group not in listSubGrps %} 
                 <a href="#mySub" role="button" class="btn btn-warning" 
     data-toggle="modal" onclick="clear_form({{spread.group.id}}, {{spread.group.amount}});">Разделить</a>
@@ -77,6 +85,7 @@ data-toggle="modal">Назначить преподавателя</a>
             	{% endif %}
             {% endif %}
         </td>
+        <td><a href="?remove={{spread.id}}" title="Удалить"><i class="icon-trash"></i></a></td>
     </tr>
     {% endfor %}
 </table>
@@ -150,7 +159,91 @@ data-toggle="modal">Назначить преподавателя</a>
 </div>
 </form>
 
+<!-- FORM SPLIT -->
+<form action="" method="post">
+    <div id="split" class="modal hide fade" tabindex="-1" 
+        role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Разделение нагрузки</h3>
+        </div>
+
+        <div class="form-horizontal nomargin">
+            <div class="modal-body">
+
+                <div class="form-group">
+                        <label for="number" class="col-sm-2 control-label">Количество частей</label>
+                        <input type="number" class="form-control input_short" min="1" max="5" id="number" name="number" value=1 required>
+                </div>
+
+                <div class="parts">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Разделить нагрузку</button>
+        </div>
+
+    </div>
+</form>
+
 <script>
+
+    $("select[name=caf]").change(function() {
+        $("select[name=sem] option[data-caf!="+$(this).val()+"]").addClass("select_hidden");
+        $("select[name=sem] option[data-caf="+$(this).val()+"]").removeClass();
+    })
+
+    var hours = 0;
+
+    $("input[name=number]").change(function() { 
+        count = $(this).val();
+        inputs = $(".parts input[type=number]").size();
+        if (count > inputs) 
+            for (i=inputs; i < count; i++) {
+                var $in2 = $("<input type='number' min=0 class='form-control input_number input_number_2' id='number' name='hours"+i+"' value=0 required/>");
+                $(".parts").append($in2);
+                $('input[name=hours'+i+']').change(function() {
+                    check(parseInt($(this).attr('name').replace('hours','')));
+                });
+            } else {
+                for (i=count; i < inputs; i++) {
+                    $(".parts input[type=number]")[i].remove();
+                }
+                check(0);
+        }
+    });
+
+    function check(index) {
+        list = $(".parts input[type=number]");
+        sum = 0;
+        last = hours;
+        for (i=0; i < list.size(); i++) {
+            if ( i>index) {
+                list[i].value = last;
+            }
+            last -= parseInt(list[i].value);
+        }
+    }
+
+    function splitForm(spread, count) { 
+        hours=count;
+        $("input[name=number]").val(2);
+        $(".parts").empty();
+        $(".parts").append($("<input type='hidden' name='idSpread' value='"+spread+"'/>"));
+        for (i=0; i < 2; i++) {
+            var $in2 = $("<input type='number' min=0 class='form-control input_number input_number_2' id='number' name='hours"+i+"' value=0 required/>");
+            $(".parts").append($in2);
+            $('input[name=hours'+i+']').change(function() {
+                check(parseInt($(this).attr('name').replace('hours','')));
+            });
+        }
+        check(-1);
+    }
 
     function clear_form(group, count) { 
         $("input[name=number]").val(2);
@@ -165,14 +258,12 @@ data-toggle="modal">Назначить преподавателя</a>
         row.find(".icon").text("");
         var $field = $("<input type='number' style='width:40px; margin: 0' min=0 id="+id+" name='' value="+hours+" required/>");
         row.find(".hours").append($field);
-        // alert("id="+id+", count="+index);
         var $icon = $('<a href="#" id='+id+' onclick="getData('+id+')"><i class="icon-ok"></i></a>');
         row.find(".icon").append($icon);
     }
 
     function getData(id) {
         hours = $("input[id="+id+"]").val();
-        // console.log($("a[id="+id+"]"));
         $("a[id="+id+"]").prop("href", '?editId='+id+'&hours='+hours);
 
     }

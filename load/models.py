@@ -33,7 +33,7 @@ class Group(models.Model):
 		unique_together = ('caf', 'sem', 'number', 'grade')
 
 class Subgroup(models.Model):
-	group = models.ForeignKey(Group, unique=True)
+	group = models.OneToOneField(Group)
 	amount = models.IntegerField()
 
 class FormPass(models.Model):
@@ -60,5 +60,3 @@ class Spread(models.Model):
 	group = models.ForeignKey(Group, null=True)
 	prof = models.ForeignKey(Professors, null=True)
 	hours = models.IntegerField()
-	class Meta:
-		unique_together = ('loadUnit', 'group')

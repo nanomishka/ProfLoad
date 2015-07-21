@@ -50,7 +50,26 @@ def index(request):
     except:
         status = "Данная запись не существует"
 
-    spreads = Spread.objects.all().order_by('loadUnit','group')
+    # split spread
+    try:
+        split = request.POST.get('number')
+        idSpread = int(request.POST.get('idSpread'))
+        spread = Spread.objects.get(id=idSpread)
+        for s in range(0, int(split)):
+            amount = int(request.POST.get('hours'+str(s)))
+            if amount != 0:
+                if s != 0:
+                    Spread.objects.create(loadUnit=spread.loadUnit, group=spread.group, hours=amount)
+                else:
+                    if spread.hours != amount:
+                        spread.hours = amount
+                        spread.save()
+                    else:
+                        break
+    except:
+        status = "Данная запись не существует"
+
+    spreads = Spread.objects.all().order_by('loadUnit__subject__name', '-loadUnit__typeLoad__sort', 'group')
     groups = Group.objects.all()
     subgroups = Subgroup.objects.all()
     listSubGrps = []
