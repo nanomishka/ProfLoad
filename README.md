@@ -81,9 +81,8 @@ _________________________________________________________
 1. скачиваем к себе новую версию системы
 https://github.com/nanomishka/ProfLoad
 
-!!!в среде mysql выполняем запрос (можно войти через терминал `python manage.py dbshell`)
+2. выполняем 
 
-###### copy hours from loadunits to spreads
+	`$ python manage.py makemigrations`
 	
-`UPDATE load_spread ls SET hours = (SELECT hours FROM load_loadunit ll where ls.loadUnit_id = ll.id);`
-
+	`$ python manage.py migrate`
