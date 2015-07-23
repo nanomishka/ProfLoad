@@ -4,6 +4,9 @@
 
 <h4>Нагрузочная единица</h4>
 
+<!-- Button for FORM CREATE -->
+<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal" onclick="dataForm( 0, 0);">Добавить нагрузочную единицу</a>
+
 <table class="table table-hover">
     <tr>
         <th>№</th>
@@ -49,8 +52,6 @@
     {% endfor %}
 </table>
 
-<!-- Button for FORM CREATE -->
-<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal" onclick="dataForm( 0, 0);">Добавить нагрузочную единицу</a>
 <!-- FORM CREATE -->
 <div id="myModal" class="modal hide fade" tabindex="-1" 
     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

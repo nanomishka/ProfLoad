@@ -488,7 +488,7 @@ def loadUnit(request):
         status = "Данная запись не существует"
 
 
-    loadUnits = LoadUnit.objects.all().order_by('subject')
+    loadUnits = LoadUnit.objects.all().order_by('subject__name')
     subjects = Subject.objects.all()
     cafs = Caf.objects.all()
 
