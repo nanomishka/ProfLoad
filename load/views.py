@@ -96,6 +96,76 @@ def index(request):
         "listSubGrps" : listSubGrps,
         "hours" : hours,
     }
+
+    style_bold = xlwt.easyxf('font: name Times New Roman, color-index black, bold on', num_format_str='#,##0')
+    wb1 = xlwt.Workbook()
+    ws1 = wb1.add_sheet('Load')
+
+    ws1.col(0).width = 200*30
+    ws1.col(1).width = 100*30
+    ws1.col(2).width = 70*30
+    ws1.col(3).width = 100*30
+    ws1.col(4).width = 60*30
+    ws1.col(5).width = 150*30
+
+    DATA = [0,1]
+
+    ws1.write(0, 0, u"Предмет",style=style_bold)
+    ws1.write(0, 1, u"Группа",style=style_bold)
+    ws1.write(0, 2, u"Семестр",style=style_bold)
+    ws1.write(0, 3, u"Вид нагрузки",style=style_bold)
+    ws1.write(0, 4, u"Часы",style=style_bold)
+    ws1.write(0, 5, u"Преподаватель",style=style_bold)
+
+    y = 1
+    for spread in spreads:
+        #Запись данных в таблицу
+        ws1.write(y, 0, spread.loadUnit.subject.name,style=style_bold)
+
+        if spread.group:
+            string = " "
+            if spread.group.grade == "b":
+                string = string + u'\u0411' 
+            elif spread.group.grade == "m":
+                string = string + u'\u041c'
+            if spread.loadUnit.typeLoad.typeTL == "sub":
+                    if spread.group not in listSubGrps:
+                        string = string + "(?)"
+                    else: 
+                        for sub in subgroups:
+                            if sub.group == spread.group:
+                                string = string + "(" + str(sub.amount) + ")"
+            ws1.write(y, 1, spread.group.caf.name + "-" + str(spread.group.sem) + str(spread.group.number) + string,style=style_bold)
+        else:
+            grps = groups.filter( caf=spread.loadUnit.caf, sem = spread.loadUnit.sem)
+            string = ""
+            i = 0
+            for gr in grps:
+                if i != 0:
+                    string = string + '\n'
+                i = 1
+                string = string + gr.caf.name + "-" + str(gr.sem) + str(gr.number) + " "
+                if gr.grade == "b":
+                    string = string + u'\u0411' 
+                elif gr.grade == "m":
+                    string = string + u'\u041c'
+            ws1.write(y, 1, string, style=style_bold)
+        ws1.write(y, 2, spread.loadUnit.sem, style=style_bold)
+        ws1.write(y, 3, spread.loadUnit.typeLoad.name, style=style_bold)
+        if spread.loadUnit.typeLoad.typeTL != "sub":
+            ws1.write(y, 4, spread.hours,style=style_bold)
+        else:
+            if spread.group in listSubGrps:
+                for sub in subgroups:
+                    if sub.group == spread.group:
+                        ws1.write(y, 4, spread.hours * sub.amount ,style=style_bold)
+                        break
+        if spread.prof:
+            ws1.write(y, 5, spread.prof.last_name,style=style_bold)
+        y = y + 1
+
+    wb1.save('static/report_subjects.xls')
+
     return render(request, 'index.html', context)
 
 def prof(request):
