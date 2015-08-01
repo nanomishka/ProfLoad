@@ -98,3 +98,7 @@ body {
 	padding: 5px; 
 	background-color: #888;
 }
+
+.pointer {
+	cursor: pointer;
+}

@@ -4,6 +4,9 @@
 
 <h4>Преподаватели</h4>
 
+<!-- Button for FORM CREATE -->
+<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Добавить преподавателя</a>
+
 <table class="table table-hover">
     <tr>
         <th>№</th>
@@ -12,6 +15,7 @@
         <th>Отчетство</th>
         <th>Звание</th>
         <th>Должность</th>
+        <th>Часы</th>
         <th></th>
     </tr>
     {% for professor in professors %}
@@ -22,15 +26,36 @@
         <td>{{professor.middle_name}}</td>
         <td>{{professor.degree.name}}</td>
         <td>{{professor.post.name}}</td>
+        <td>{% for prof in hours %}{% if prof.0 == professor.id %} {{prof.1}} {% endif %} {% endfor %}</td>
         <td>
-            <a href="/prof?remove={{professor.id}}"><i class="icon-trash"></i></a>
+            <i class="icon-trash pointer" title="Удалить" data-target="#cofirmForm" data-toggle="modal"
+            onclick="$('#delName').text('{{professor.last_name}} {{professor.first_name|slice:':1'}}.{{professor.middle_name|slice:':1'}}.');
+            $('[data-id]').attr('data-id', {{professor.id}});" ></i>
         </td>
     </tr>
     {% endfor %}
 </table>
 
-<!-- Button for FORM CREATE -->
-<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Добавить преподавателя</a>
+<!-- FORM CONFIRM -->
+<div class="modal fade" id="cofirmForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Подтвердите удаление</h4>
+      </div>
+      <div class="modal-body">
+        Удалить запись о преподавателе <b id="delName"> </b> ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отменить</button>
+        <button type="button" class="btn btn-primary" id="idRem" data-id=0 
+        onclick="document.location.href = '/prof?remove='+$(this).attr('data-id');">Подтвердить удаление</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- FORM CREATE -->
 <div id="myModal" class="modal hide fade" tabindex="-1" 
     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

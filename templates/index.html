@@ -14,13 +14,13 @@ data-toggle="modal">Скачать <img src="static/excel.png" width="40"></a>
 <table class="table table-hover table_spread">
     <tr>
         <th></th>
-        <th>Предмет</th>
+        <th>Предмет<a href="?sort=spread"><i class="icon-arrow-down"> </a></th>
         <th>Тип нагрузки</th>
         <th>Группа</th>
         <th>Часы</th>
         <th></th>
         <th></th>
-        <th></th>
+        <th>Преподаватель<a href="?sort=prof"><i class="icon-arrow-down"> </a></th>
         <th></th>
     </tr>
     {% for spread in spreads %}
@@ -89,10 +89,34 @@ data-toggle="modal">Скачать <img src="static/excel.png" width="40"></a>
             	{% endif %}
             {% endif %}
         </td>
-        <td><a href="?remove={{spread.id}}" title="Удалить"><i class="icon-trash"></i></a></td>
+        <td>
+            <i class="icon-trash pointer" title="Удалить" data-target="#cofirmForm" data-toggle="modal"
+            onclick="$('#delName').text('{{spread.loadUnit.subject.name}} ({{spread.loadUnit.typeLoad.name}})');
+            $('[data-id]').attr('data-id', {{spread.id}});" ></i>
+        </td>
     </tr>
     {% endfor %}
 </table>
+
+<!-- FORM CONFIRM -->
+<div class="modal fade" id="cofirmForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Подтвердите удаление</h4>
+      </div>
+      <div class="modal-body">
+        Удалить запись о нагрузке <b id="delName"> </b> ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отменить</button>
+        <button type="button" class="btn btn-primary" id="idRem" data-id=0 
+        onclick="document.location.href = '?remove='+$(this).attr('data-id');">Подтвердить удаление</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="myModal" class="modal hide fade" tabindex="-1" 
     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

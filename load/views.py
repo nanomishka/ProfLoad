@@ -70,6 +70,14 @@ def index(request):
         status = "Данная запись не существует"
 
     spreads = Spread.objects.all().order_by('loadUnit__subject__name', '-loadUnit__typeLoad__sort', 'group')
+    try:
+        sort = request.GET.get('sort')
+        if sort == "prof":
+            spreads = Spread.objects.all().order_by('prof__last_name', 'loadUnit__subject__name', '-loadUnit__typeLoad__sort', 'group')
+    except:
+        spreads = {}
+    
+
     groups = Group.objects.all()
     subgroups = Subgroup.objects.all()
     listSubGrps = []
@@ -187,11 +195,22 @@ def prof(request):
     professor = Professors.objects.all().order_by('last_name')
     degrees = Degrees.objects.all()
     posts = Posts.objects.all()
+    hours = []
+    for prof in professor:
+        listSpread = Spread.objects.filter(prof=prof)
+        time = 0
+        for spr in listSpread:
+            t = int(spr.hours)
+            if spr.loadUnit.typeLoad.typeTL == "sub":
+                t *= int(Subgroup.objects.get(group=spr.group).amount)
+            time += t
+        hours.append([prof.id,time])
     context = {
         "professors" : professor,
         "degrees" : degrees,
         "posts" : posts,
-        "menu" : "prof",   
+        "menu" : "prof",
+        "hours" : hours,  
     }
     return render(request, 'prof.html', context)
 
