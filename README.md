@@ -81,7 +81,12 @@ _________________________________________________________
 1. скачиваем к себе новую версию системы
 https://github.com/nanomishka/ProfLoad
 
-2. выполняем 
+Выполнить команды в корневой директории (там, где лежит файл manage.py)
+
+	`$ git reset --hard`
+	`$ git pull origin master`	
+
+2. выполняем команды
 
 	`$ python manage.py makemigrations`
 	
