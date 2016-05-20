@@ -1,0 +1,13 @@
+# exclude everything except directory foo/bar
+*.pyc
+
+# exclude Idea files
+.idea/
+
+# exclude dump files
+dump*
+
+# exclude report files
+static/report_subjects.xls
+static/report.xls
+

@@ -2,6 +2,17 @@
 
 {% block main %}
 <h4>{{ title }}</h4>
+
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/loadunit/subject/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
+
 <table class="table table-hover">
     <tr>
         <th>№</th>
@@ -9,8 +20,8 @@
         <th></th>
     </tr>
     {% for item in items %}
-    <tr> 
-        <td>{{forloop.counter}}</td>
+    <tr>
+        <td>{{forloop.counter|add:counter.start_val}}</td>
         <td>{{item.name}}</td>
         <td>
             <a href="?remove={{item.id}}"><i class="icon-trash"></i></a>
@@ -18,6 +29,17 @@
     </tr>
     {% endfor %}
 </table>
+
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/loadunit/subject/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
+
 <form method="post">
     <fieldset>
         <label>Добавить {{ add }}

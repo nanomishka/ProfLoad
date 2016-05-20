@@ -4,24 +4,31 @@
 
 <h4>Нагрузочная единица</h4>
 
-<!-- Button for FORM CREATE -->
-<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal" onclick="dataForm( 0, 0);">Добавить нагрузочную единицу</a>
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/loadunit/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
 
 <table class="table table-hover">
     <tr>
-        <th>№</th>
-        <th>Предмет</th>
-        <th>Форма сдачи</th>
-        <th>Группы</th>
-        <th>Тип Нагрузки</th>
-        <th>Часы</th>
-        <th></th>
-        <th></th>
-        <th></th>
+        <th class="span1">№</th>
+        <th class="span1">Предмет</th>
+        <th class="span1">Форма сдачи</th>
+        <th class="span2">Группы</th>
+        <th class="span1">Тип Нагрузки</th>
+        <th class="span1">Часы</th>
+        <th class="span1"></th>
+        <th class="span1"></th>
+        <th class="span1"></th>
     </tr>
     {% for loadUnit in loadUnits %}
     <tr> 
-        <td>{{forloop.counter}}</td>
+        <td>{{forloop.counter|add:counter.start_val}}</td>
         <td class="subject">{{loadUnit.subject.name}}</td>
         <td class="formPass">{{loadUnit.formPass.name}}</td>
         <td>{% for group in groups %}
@@ -52,6 +59,20 @@
     {% endfor %}
 </table>
 
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/loadunit/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
+
+<!-- Button for FORM CREATE -->
+<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal" onclick="dataForm( 0, 0);">Добавить нагрузочную единицу</a>
+
+
 <!-- FORM CREATE -->
 <div id="myModal" class="modal hide fade" tabindex="-1" 
     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -61,7 +82,7 @@
         <h3 id="myModalLabel">Добавление нагрузочной единицы</h3>
     </div>
 
-    <form class="form-horizontal nomargin" action="" method="post">
+    <form class="form-horizontal nomargin" method="post">
         <div class="modal-body nomargin">
         
             <div class="form-group">
@@ -129,7 +150,7 @@
 </div>
 
 <!-- FORM SPLIT -->
-<form action="" method="post">
+<form method="post">
     <div id="split" class="modal hide fade" tabindex="-1" 
         role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 

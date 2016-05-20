@@ -4,8 +4,15 @@
 
 <h4>Преподаватели</h4>
 
-<!-- Button for FORM CREATE -->
-<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Добавить преподавателя</a>
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/prof/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
 
 <table class="table table-hover">
     <tr>
@@ -20,7 +27,7 @@
     </tr>
     {% for professor in professors %}
     <tr> 
-        <td>{{forloop.counter}}</td>
+        <td>{{forloop.counter|add:counter.start_val}}</td>
         <td>{{professor.last_name}}</td>
         <td>{{professor.first_name}}</td>
         <td>{{professor.middle_name}}</td>
@@ -36,6 +43,20 @@
     {% endfor %}
 </table>
 
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/prof/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
+
+<!-- Button for FORM CREATE -->
+<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Добавить преподавателя</a>
+
+
 <!-- FORM CONFIRM -->
 <div class="modal fade" id="cofirmForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
@@ -50,7 +71,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Отменить</button>
         <button type="button" class="btn btn-primary" id="idRem" data-id=0 
-        onclick="document.location.href = '/prof?remove='+$(this).attr('data-id');">Подтвердить удаление</button>
+        onclick="document.location.href = '?remove='+$(this).attr('data-id');">Подтвердить удаление</button>
       </div>
     </div>
   </div>
@@ -65,7 +86,7 @@
         <h3 id="myModalLabel">Добавление преподавателя</h3>
     </div>
 
-    <form class="form-horizontal nomargin" action="/prof" method="post">
+    <form class="form-horizontal nomargin" method="post">
         <div class="modal-body">
             <div class="form-group">
                 <label for="lastName" class="col-sm-2 control-label">Фамилия</label>
@@ -99,7 +120,7 @@
             </div>
             
         </div>
-    
+
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
             <button type="submit" class="btn btn-primary">Добавить  преподавателя</button>

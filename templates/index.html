@@ -7,12 +7,27 @@
 <a href="#myModal" role="button" class="btn btn-primary btn_spread" 
 data-toggle="modal">Назначить преподавателя</a>
 
+{% if report_flag %}
+    <a href="/static/report_subjects.xls" role="button" class="btn btn-success btn_report"
+    data-toggle="modal">Скачать <img src="static/excel.png" width="40"></a>
+    {% else %}
+    <a href="?report=True" role="button" class="btn btn-success btn_report"
+    data-toggle="modal">Генерировать отчет</a>
+{% endif %}
 
-<a href="static/report_subjects.xls" role="button" class="btn btn-success btn_report" 
-data-toggle="modal">Скачать <img src="static/excel.png" width="40"></a>
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
 
 <table class="table table-hover table_spread">
     <tr>
+        <th>№</th>
         <th></th>
         <th>Предмет<a href="?sort=spread"><i class="icon-arrow-down"> </a></th>
         <th>Тип нагрузки</th>
@@ -24,7 +39,8 @@ data-toggle="modal">Скачать <img src="static/excel.png" width="40"></a>
         <th></th>
     </tr>
     {% for spread in spreads %}
-    <tr> 
+    <tr>
+        <td>{{forloop.counter|add:counter.start_val}}</td>
         <td>
             {% if not spread.prof and spread.loadUnit.typeLoad.typeTL != "sub" or not spread.prof and spread.group in listSubGrps and spread.loadUnit.typeLoad.typeTL == "sub" %}
                 <input type="checkbox" name="spread" value="{{spread.id}}"></td>
@@ -97,6 +113,16 @@ data-toggle="modal">Скачать <img src="static/excel.png" width="40"></a>
     </tr>
     {% endfor %}
 </table>
+
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
 
 <!-- FORM CONFIRM -->
 <div class="modal fade" id="cofirmForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

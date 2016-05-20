@@ -13,23 +13,26 @@
 		<div class="container">
 			<div class="navbar">
 				<div class="navbar-inner">
-					<a href="/"><h4>Система расчета нагрузки преподавателя</h4></a>
+					<a href="/" class="brand">Система расчета нагрузки преподавателя</a>
+                    <ul class="nav pull-right">
+                      <li><a data-target="#cofirmClear" data-toggle="modal">Очистить БД</a></li>
+                    </ul>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="span9">
 					<ul class="nav nav-tabs">
-					  <li {% if menu = "prof" %} class="active" {% endif %}>
-						<a href="/prof">Преподаватели</a></li>
-					  <li {% if menu = "group" %} class="active" {% endif %}>
-						<a href="/group">Группы</a></li>
-					  <li {% if menu = "subject" %} class="active" {% endif %}>
-						<a href="/loadunit">Предметы</a></li>
+					  <li {% if menu == "prof" %} class="active" {% endif %}>
+						<a href="/prof/1/">Преподаватели</a></li>
+					  <li {% if menu == "group" %} class="active" {% endif %}>
+						<a href="/group/1/">Группы</a></li>
+					  <li {% if menu == "subject" %} class="active" {% endif %}>
+						<a href="/loadunit/1/">Предметы</a></li>
 					  <li {% if not menu %} class="active" {% endif %}>
-						<a href="/">Распределение нагрузки</a></li>
-					  <li {% if menu = "report" %} class="active" {% endif %}>
-						<a href="/report">Отчет</a></li>
+						<a href="/1/">Распределение нагрузки</a></li>
+					  <li {% if menu == "report" %} class="active" {% endif %}>
+						<a href="/report/">Отчет</a></li>
 					</ul>
 				</div>
 			</div>
@@ -37,23 +40,39 @@
 				{% if menu %}
 					<div class="span2">
 						<ul class="nav nav-pills nav-stacked">
-
-							{% if menu = "prof" %}
-								<li><a href="/prof"><b>Преподаватели</b></a></li>
-								<li><a href="/prof/degree">Степени</a></li>
-								<li><a href="/prof/post">Должности</a></li>
-							{% elif menu = "subject" %}
-								<li><a href="/loadunit"><b>Нагрузочные единицы</b></a></li>
-								<li><a href="/loadunit/subject">Предметы</a></li>
-								<li><a href="/loadunit/formpass">Форма сдачи</a></li>
-								<li><a href="/loadunit/typeload">Тип нагрузки</a></li>
-								<li><a href="/loadunit/sortload">Сортировка типов нагрузки</a></li>
-							{% elif menu = "group" %}
-								<li><a href="/group"><b>Группы</b></a></li>
-								<li><a href="/group/subgroup">Подгруппы</a></li>
-								<li><a href="/group/caf">Кафедры</a></li>
-							{% elif menu = "" %}
-								<li><a href="/"><b>Расчет нагрузки</a></li>
+							{% if menu == "prof" %}
+								<li {% if sub_menu == 'prof' %} class="active" {% endif %}>
+                                    <a href="/prof/1/"><b>Преподаватели</b></a>
+                                </li>
+								<li {% if sub_menu == 'degree' %} class="active" {% endif %}>
+                                    <a href="/prof/degree/">Степени</a>
+                                </li>
+								<li {% if sub_menu == 'post' %} class="active" {% endif %}>
+                                    <a href="/prof/post/">Должности</a>
+                                </li>
+							{% elif menu == "subject" %}
+                                <li {% if sub_menu == 'loadunit' %} class="active" {% endif %}>
+                                    <a href="/loadunit/1/"><b>Нагрузочные единицы</b></a></li>
+                                <li {% if sub_menu == 'subject' %} class="active" {% endif %}>
+                                    <a href="/loadunit/subject/1/">Предметы</a></li>
+                                <li {% if sub_menu == 'formpass' %} class="active" {% endif %}>
+                                    <a href="/loadunit/formpass/">Форма сдачи</a></li>
+                                <li {% if sub_menu == 'typeload' %} class="active" {% endif %}>
+                                    <a href="/loadunit/typeload/">Тип нагрузки</a></li>
+                                <li {% if sub_menu == 'sortload' %} class="active" {% endif %}>
+                                    <a href="/loadunit/sortload/">Сортировка типов нагрузки</a></li>
+							{% elif menu == "group" %}
+								<li {% if sub_menu == 'group' %} class="active" {% endif %}>
+                                    <a href="/group/1/"><b>Группы</b></a>
+                                </li>
+								<li {% if sub_menu == 'subgroup' %} class="active" {% endif %}>
+                                    <a href="/group/subgroup/1/">Подгруппы</a>
+                                </li>
+								<li {% if sub_menu == 'caf' %} class="active" {% endif %}>
+                                    <a href="/group/caf/">Кафедры</a>
+                                </li>
+							{% elif menu == "" %}
+								<li><a href="/">Расчет нагрузки</a></li>
 							{% endif %}										
 						</ul>
 					</div>
@@ -63,5 +82,28 @@
 				</div>
 			</div>
 		</div>
+
+
+        <!-- FORM CONFIRM -->
+        <div class="modal fade" id="cofirmClear" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Подтвердите удаление</h4>
+              </div>
+              <div class="modal-body">
+                ОЧИСТИТЬ БАЗУ ДАННЫХ!!!!?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Отменить</button>
+                <button type="button" class="btn btn-primary" id="idRem" data-id=0
+                onclick="document.location.href = '/clear/'" >Подтвердить удаление</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
 	</body>
 </html>

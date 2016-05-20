@@ -4,15 +4,27 @@
 
 <h4>Группы</h4>
 
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/group/subgroup/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
+
 <table class="table table-hover">
     <tr>
+        <th>№</th>
         <th>Идентификатор</th>
         <th>Количество студентов</th>
         <th>Количество подгрупп</th>
         <th></th>
     </tr>
     {% for subgroup in  subgroups %}
-    <tr> 
+    <tr>
+        <td>{{forloop.counter|add:counter.start_val}}</td>
         <td class="monospace"><b>{{subgroup.group.caf.name}}-{{subgroup.group.sem}}{{subgroup.group.number}}{% if subgroup.group.grade == "b"%}Б{% elif subgroup.group.grade == "m"%}М{% endif %}</b>
         </td>
         <td>{{subgroup.group.amount}}</td>
@@ -22,6 +34,16 @@
     </tr>
     {% endfor %}
 </table>
+
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/group/subgroup/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
 
 <form action="" method="post">
 <div id="mySub" class="modal hide fade" tabindex="-1" 

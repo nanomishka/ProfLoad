@@ -49,7 +49,7 @@ body {
 
 .btn_spread {
 	position: absolute;
-	right: 350px;
+	right: 450px;
 	top: 120px;
 	font-size: 18px;
 }
@@ -57,7 +57,7 @@ body {
 .btn_report {
 	position: absolute;
 	right: 200px;
-	top: 100px;
+	top: 120px;
 	font-size: 18px;
 }
 

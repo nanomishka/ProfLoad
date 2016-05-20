@@ -4,8 +4,19 @@
 
 <h4>Группы</h4>
 
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/group/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
+
 <table class="table table-hover">
     <tr>
+        <th>№</th>
         <th>Идентификатор</th>
         <th>Кафедра</th>
         <th>Семестр</th>
@@ -14,7 +25,8 @@
         <th></th>
     </tr>
     {% for group in groups %}
-    <tr> 
+    <tr>
+        <td>{{forloop.counter|add:counter.start_val}}</td>
         <td class="monospace"><b>{{group.caf.name}}-{{group.sem}}{{group.number}}{% if group.grade == "b"%}Б{% elif group.grade == "m"%}М{% endif %}</b>
         </td>
         <td>{{group.caf.name}}</td>
@@ -28,6 +40,16 @@
     {% endfor %}
 </table>
 
+<div class="pagination">
+  <ul>
+      {% for page in pages %}
+        <li {% ifequal forloop.counter counter.page %} class="active" {% endifequal %}>
+            <a href="/group/{{ forloop.counter }}/" >{{ page }}</a>
+        </li>
+      {% endfor %}
+  </ul>
+</div>
+
 <!-- Button for FORM CREATE -->
 <a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Добавить группы</a>
 <!-- FORM CREATE -->
@@ -39,7 +61,7 @@
         <h3 id="myModalLabel">Добавление групп</h3>
     </div>
 
-    <form class="form-horizontal nomargin" action="/group" method="post">
+    <form class="form-horizontal nomargin" method="post">
         <div class="modal-body">
 
             <div class="form-group">
