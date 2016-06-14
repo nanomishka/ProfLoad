@@ -4,8 +4,6 @@ from django.views.generic import RedirectView
 from load import views
 
 urlpatterns = patterns('',
-    url(r'^$',  RedirectView.as_view(url='/1/')),
-    url(r'^(?P<page>\d+)/$', views.index, name='index'),
     url(r'^prof/(?P<page>\d+)/$', views.prof, name='prof'),
     url(r'^prof/degree/$', views.degree, name='degree'),
     url(r'^prof/post/$', views.post, name='post'),
@@ -17,7 +15,8 @@ urlpatterns = patterns('',
     url(r'^loadunit/typeload/$', views.typeload, name='typeload'),
     url(r'^loadunit/sortload/$', views.sortload, name='sortload'),
     url(r'^loadunit/formpass/$', views.formpass, name='formpass'),
-    # url(r'^spread/$', views.spread, name='spread'),
     url(r'^report/$', views.report, name='report'),
-    url(r'^clear/$', views.clear, name='clear')
+    url(r'^clear/$', views.clear, name='clear'),
+    url(r'^(?P<page>\d+)/$', views.index, name='index'),
+    url(r'^$',  RedirectView.as_view(url='/1/'))
 )

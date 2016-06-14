@@ -3,7 +3,7 @@
 {% block main %}
 
 <h4 style="width: 300px">Распределение нагрузки</h4>
-<form action="/" method="post">
+<form action="/{{ counter.page }}/" method="post">
 <a href="#myModal" role="button" class="btn btn-primary btn_spread" 
 data-toggle="modal">Назначить преподавателя</a>
 
@@ -125,7 +125,7 @@ data-toggle="modal">Назначить преподавателя</a>
 </div>
 
 <!-- FORM CONFIRM -->
-<div class="modal fade" id="cofirmForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal hide fade" id="cofirmForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -178,7 +178,7 @@ data-toggle="modal">Назначить преподавателя</a>
 </div>
 </form>
 
-<form action="/" method="post">
+<form action="/{{ counter.page }}/" method="post">
 <div id="mySub" class="modal hide fade" tabindex="-1" 
     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 
@@ -214,7 +214,7 @@ data-toggle="modal">Назначить преподавателя</a>
 </form>
 
 <!-- FORM SPLIT -->
-<form action="" method="post">
+<form action="/{{ counter.page }}/" method="post">
     <div id="split" class="modal hide fade" tabindex="-1" 
         role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 

@@ -8,6 +8,7 @@ from namePaginator import NamePaginator
 
 
 def index(request,  page):
+    page = page or 1
     page = int(page)
     pag_limit = 30
 
