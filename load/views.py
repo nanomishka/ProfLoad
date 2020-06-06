@@ -220,7 +220,8 @@ def prof(request, page):
     counter = 0
     if page:
         paginator = NamePaginator(Professors.objects.all(), on='last_name', per_page=8)
-        professors = paginator.page(page).get_object_list()
+        page_data =  paginator.page(page)
+        professors = page_data.get_object_list() if page_data else []
 
         for i in range(len(paginator.pages)):
             p = paginator.pages[i]
@@ -312,7 +313,8 @@ def subject(request, page):
     pag_data = {'pages': [], 'counter': {'page': page, 'start_val': 0}}
     if page:
         paginator = NamePaginator(subjects, on='name', per_page=8)
-        subjects = paginator.page(page).get_object_list()
+        page_data =  paginator.page(page)
+        subjects = page_data.get_object_list() if page_data else []
 
         for i in range(len(paginator.pages)):
             p = paginator.pages[i]
