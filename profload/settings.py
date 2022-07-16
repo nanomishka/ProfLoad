@@ -64,9 +64,10 @@ WSGI_APPLICATION = 'profload.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME' : 'profdb',
-        'USER' : 'prof',
-        'PASSWORD' : 'prof',
+        'HOST': 'db',
+        'NAME': 'profdb',
+        'USER': 'prof',
+        'PASSWORD': 'prof',
     }
 }
 

@@ -1,0 +1,37 @@
+version: "3.5"
+
+services:
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=psswd
+      - MYSQL_USER=prof
+      - MYSQL_PASSWORD=prof
+      - MYSQL_DATABASE=profdb
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping"]
+        timeout: 1s
+        interval: 1s
+        retries: 5
+
+  server:
+    build: .
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "9999:8000"
+    command: >
+      bash -c "./manage.py migrate
+      & ./manage.py runserver 0.0.0.0:8000"
+
+volumes:
+  dbdata:  # yamllint disable-line
